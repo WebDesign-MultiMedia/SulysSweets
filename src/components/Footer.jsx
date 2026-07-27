@@ -10,7 +10,7 @@ const navLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-plum px-5 py-14 text-cream sm:px-8">
+    <footer className="bg-ivory px-5 py-14 text-plum sm:px-8">
       <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center">
         <>
           <p className="font-display text-xl">Suly&apos;s Sweets</p>
@@ -18,7 +18,7 @@ export default function Footer() {
           <ul className="flex flex-wrap justify-center gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="text-sm text-cream/80 transition-colors hover:text-mauve">
+                <a href={link.href} className="text-sm text-plum/80 transition-colors hover:text-mauve-dark">
                   {link.label}
                 </a>
               </li>
@@ -27,7 +27,7 @@ export default function Footer() {
 
           <p className="font-display text-lg italic">{thankYouNote}</p>
 
-          <p className="text-xs text-cream/50">
+          <p className="text-xs text-plum/50">
             {`© ${new Date().getFullYear()} Suly's Sweets. All rights reserved.`}
           </p>
         </>
