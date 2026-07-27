@@ -28,7 +28,7 @@ import {
 
 export default function MenuSection() {
   return (
-    <section id="menu" className="bg-blush px-5 py-20 sm:px-8 sm:py-28">
+    <section id="menu" className="bg-ivory px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">

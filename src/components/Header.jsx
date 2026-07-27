@@ -49,7 +49,7 @@ export default function Header() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-cream/90 py-3 shadow-sm backdrop-blur-sm" : "bg-transparent py-6"
+        scrolled ? "bg-ivory/90 py-3 shadow-sm backdrop-blur-sm" : "bg-transparent py-6"
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
@@ -60,7 +60,7 @@ export default function Header() {
           }`}
         >
           <img src="/logo.png" alt="Suly's Sweets logo" width={40} height={40} className="h-10 w-10 rounded-full" />
-          <span className="font-display text-lg tracking-wide text-plum">Suly&apos;s Sweets</span>
+          <span className="font-script text-2xl tracking-wide text-plum">Suly&apos;s Sweets</span>
         </a>
 
         <ul className="hidden items-center gap-10 md:flex">
@@ -97,10 +97,25 @@ export default function Header() {
       >
         <div
           ref={panelRef}
-          className={`relative h-full w-full overflow-hidden border border-plum/10 bg-cream shadow-lg transition-all duration-500 ease-out ${
-            open ? "rounded-[32px] shadow-2xl" : "rounded-full"
+          className={`relative h-full w-full overflow-hidden border border-plum/10 shadow-lg transition-all duration-500 ease-out ${
+            open
+              ? "rounded-[32px] bg-gradient-to-br from-ivory via-cream to-blush shadow-2xl"
+              : "rounded-full bg-cream"
           }`}
         >
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute -left-12 -top-12 h-56 w-56 rounded-full bg-terracotta/30 blur-3xl transition-opacity duration-700 ${
+              open ? "opacity-100 delay-200" : "opacity-0"
+            }`}
+          />
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute -right-16 top-1/3 h-72 w-72 rounded-full bg-crimson/20 blur-3xl transition-opacity duration-700 ${
+              open ? "opacity-100 delay-300" : "opacity-0"
+            }`}
+          />
+
           <img
             src="/logo.png"
             alt=""
@@ -115,7 +130,7 @@ export default function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="flex w-full items-center gap-2.5 px-4 py-3.5"
+            className="flex w-full items-center gap-2.5 px-4 py-3.5 transition-transform duration-150 active:scale-95"
           >
             <span className="flex h-4 w-4 flex-shrink-0 flex-col items-center justify-center gap-1">
               <span
@@ -131,7 +146,7 @@ export default function Header() {
               />
             </span>
             <span
-              className={`overflow-hidden whitespace-nowrap text-sm font-medium tracking-wide text-plum transition-all duration-300 ${
+              className={`overflow-hidden whitespace-nowrap font-script text-xl leading-none text-plum transition-all duration-300 ${
                 open ? "max-w-0 opacity-0" : "max-w-[4rem] opacity-100"
               }`}
             >
@@ -142,20 +157,20 @@ export default function Header() {
           <div
             className={`px-6 pb-8 transition-opacity duration-300 ${open ? "opacity-100 delay-150" : "opacity-0"}`}
           >
-            <p className="mb-4 text-xs uppercase tracking-wider text-plum/40">Menu</p>
+            <p className="mb-1 font-script text-xl text-plum/50">Menu</p>
             <ul className="flex flex-col">
               {navLinks.map((link, i) => (
                 <li
                   key={link.href}
-                  style={{ transitionDelay: open ? `${150 + i * 60}ms` : "0ms" }}
-                  className={`transition-all duration-300 ease-out ${
-                    open ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                  style={{ transitionDelay: open ? `${150 + i * 70}ms` : "0ms" }}
+                  className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                    open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
                   }`}
                 >
                   <a
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block py-2 font-script text-5xl font-semibold text-plum transition-colors hover:text-mauve-dark"
+                    className="block origin-left py-1.5 font-script text-3xl leading-tight text-plum transition-all duration-150 hover:text-terracotta active:scale-95"
                   >
                     {link.label}
                   </a>

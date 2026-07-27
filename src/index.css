@@ -2,15 +2,18 @@
 
 @theme {
   --color-blush: #f8ece9;
-  --color-cream: #fffaf6;
+  --color-cream: white;
   --color-plum: #3d2b39;
   --color-mauve: #b98c8c;
   --color-mauve-dark: #9c6c6c;
   --color-bronze: #a98859;
+  --color-ivory: #f7e8d0;
+  --color-terracotta: #c2703d;
+  --color-crimson: #b23b3b;
 
   --font-display: "Playfair Display", serif;
   --font-body: "Poppins", sans-serif;
-  --font-script: "Dancing Script", cursive;
+  --font-script: "Alex Brush", cursive;
 }
 
 html {
@@ -24,7 +27,7 @@ html {
 }
 
 body {
-  background: var(--color-blush);
+  background: var(--color-ivory);
   color: var(--color-plum);
   font-family: var(--font-body);
   overflow-x: hidden;

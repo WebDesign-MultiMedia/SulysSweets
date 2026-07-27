@@ -6,7 +6,7 @@ export default function About() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
         <Reveal className="relative mx-auto aspect-square w-full max-w-sm">
           <div className="absolute -inset-4 rounded-[2.5rem] border border-mauve/30" />
-          <div className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-[2rem] bg-blush">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-[2rem] bg-ivory">
             <img src="/logo.png" alt="Suly's Sweets logo" width={122} height={122} className="h-24 w-24 rounded-full shadow-md" />
             <p className="font-display text-2xl text-plum italic">Suly&apos;s Sweets</p>
           </div>
