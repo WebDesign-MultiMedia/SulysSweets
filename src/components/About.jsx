@@ -1,14 +1,14 @@
 import Reveal from "./Reveal";
+import AboutSlideshow from "./AboutSlideshow";
 
 export default function About() {
   return (
     <section id="about" className="bg-cream px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
         <Reveal className="relative mx-auto aspect-square w-full max-w-sm">
-          <div className="absolute -inset-4 rounded-[2.5rem] border border-mauve/30" />
-          <div className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-[2rem] bg-ivory shadow-lg shadow-plum/10">
-            <img src="/logo.png" alt="Suly's Sweets logo" width={122} height={122} className="h-24 w-24 rounded-full shadow-md" />
-            <p className="font-display text-2xl text-plum italic">Suly&apos;s Sweets</p>
+          <div className="h-full w-full rounded-[2rem] bg-ivory" />
+          <div className="absolute inset-x-0 top-1/2 z-10 aspect-[9/16] w-full -translate-y-1/2">
+            <AboutSlideshow className="h-full w-full rounded-[2rem]" />
           </div>
         </Reveal>
 

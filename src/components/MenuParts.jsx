@@ -7,7 +7,7 @@ export function CategoryCard({ title, inlinePrice, children }) {
         {inlinePrice && <PriceTag>{inlinePrice}</PriceTag>}
       </h3>
       <div className="my-3 h-px w-full bg-mauve/25" />
-      <div className="space-y-3 text-sm text-plum/85">{children}</div>
+      <div className="flow-root space-y-3 text-sm text-plum/85">{children}</div>
     </div>
   );
 }
@@ -28,7 +28,7 @@ export function PriceTag({ children }) {
 
 export function PriceList({ rows }) {
   return (
-    <ul className="list-none space-y-1 p-0">
+    <ul className="list-none space-y-1 p-0 relative z-20">
       {rows.map((row) => (
         <li key={row.label} className="flex justify-between gap-4">
           <span>{row.label}</span>
