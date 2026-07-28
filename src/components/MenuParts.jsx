@@ -1,6 +1,7 @@
 export function CategoryCard({ title, inlinePrice, children }) {
   return (
-    <div className="rounded-2xl bg-cream p-7 shadow-sm shadow-plum/5">
+    <div className="group relative rounded-3xl bg-cream p-7 shadow-lg shadow-plum/10 ring-1 ring-plum/5 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-plum/20 hover:ring-mauve/40">
+      <div className="absolute inset-x-7 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-mauve-dark to-transparent transition-transform duration-300 group-hover:scale-x-100" />
       <h3 className="flex flex-wrap items-baseline gap-2 font-display text-2xl text-plum">
         {title}
         {inlinePrice && <PriceTag>{inlinePrice}</PriceTag>}

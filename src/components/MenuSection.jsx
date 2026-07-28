@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import CakeSlideshow from "./CakeSlideshow";
 import {
   CategoryCard,
   Subcategory,
@@ -48,7 +49,7 @@ export default function MenuSection() {
 
           <Reveal
             delay={300}
-            className="mx-auto mt-6 max-w-xl rounded-2xl border border-mauve/40 bg-cream px-6 py-4"
+            className="mx-auto mt-6 max-w-xl rounded-3xl border border-mauve/40 bg-cream px-6 py-4 shadow-lg shadow-plum/10"
           >
             <>
               {startingPriceNotice.map((line) => (
@@ -65,6 +66,7 @@ export default function MenuSection() {
             <CategoryCard title={cakes.title}>
               <Label>Starting Prices</Label>
               <PriceList rows={cakes.startingPrices} />
+              <CakeSlideshow className="float-right ml-4 h-56 w-32" />
               <Label>Cake Flavors</Label>
               <FlavorBlock lines={cakeFlavors} />
               <Note>{cakes.note}</Note>

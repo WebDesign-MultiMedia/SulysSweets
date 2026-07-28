@@ -33,7 +33,7 @@ export default function ContactSection() {
 
         <Reveal
           delay={400}
-          className="mx-auto mt-12 max-w-md rounded-2xl border border-mauve/30 bg-ivory px-6 py-6"
+          className="mx-auto mt-12 max-w-md rounded-3xl border border-mauve/30 bg-ivory px-6 py-6 shadow-lg shadow-plum/10"
         >
           <>
             <p className="text-xs font-medium tracking-[0.3em] text-mauve-dark uppercase">Order Info</p>

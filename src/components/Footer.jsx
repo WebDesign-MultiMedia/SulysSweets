@@ -1,5 +1,6 @@
 import Reveal from "./Reveal";
 import { thankYouNote } from "../data/menu";
+import { InstagramIcon } from "./icons";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -24,6 +25,16 @@ export default function Footer() {
               </li>
             ))}
           </ul>
+
+          <a
+            href="https://www.instagram.com/sulys_sweets"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-plum/80 transition-colors hover:text-mauve-dark"
+          >
+            <InstagramIcon className="h-5 w-5" />
+            @sulys_sweets
+          </a>
 
           <p className="font-display text-lg italic">{thankYouNote}</p>
 
