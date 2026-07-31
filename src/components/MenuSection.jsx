@@ -27,6 +27,9 @@ import {
   tiramisu,
 } from "../data/menu";
 
+const thumbClass =
+  "float-right ml-3 mb-2 h-32 w-32 rounded-xl object-cover shadow-sm shadow-plum/10 sm:h-36 sm:w-36";
+
 export default function MenuSection() {
   return (
     <section id="menu" className="bg-ivory px-5 py-20 sm:px-8 sm:py-28">
@@ -69,7 +72,7 @@ export default function MenuSection() {
               <ZoomableImage
                 src="/SlideShow/whiteCake.png"
                 alt="White cake by Suly's Sweets"
-                className="absolute right-10 bottom-4 top-30 h-auto w-38 rounded-md object-contain sm:right-15 sm:bottom-7 sm:top-35 sm:w-35"
+                className={thumbClass}
               />
               <Label>Cake Flavors</Label>
               <FlavorBlock lines={cakeFlavors} />
@@ -83,7 +86,7 @@ export default function MenuSection() {
               <ZoomableImage
                 src="/churroCheesecake.png"
                 alt="Churro cheesecake by Suly's Sweets"
-                className="absolute right-4 bottom-4 top-12 h-auto w-30 rounded-md object-contain sm:right-7 sm:bottom-7 sm:top-10 sm:w-30"
+                className={thumbClass}
               />
               <FlavorBlock lines={churroCheesecake.options} />
             </CategoryCard>
@@ -91,13 +94,13 @@ export default function MenuSection() {
 
           <Reveal delay={160}>
             <CategoryCard title={cupcakes.title}>
+              <Label>By the Dozen</Label>
+              <PriceList rows={cupcakes.prices} />
               <ZoomableImage
                 src="/cupcakes.png"
                 alt="Custom cupcake dozen by Suly's Sweets"
-                className="absolute -top-16 right-14 h-60 w-auto rounded-md object-contain sm:-top-25 sm:right-10 sm:h-80"
+                className={thumbClass}
               />
-              <Label>By the Dozen</Label>
-              <PriceList rows={cupcakes.prices} />
               <Label>Flavors (Same as cakes)</Label>
               <FlavorInline>{cakeFlavors.join(", ")}</FlavorInline>
             </CategoryCard>
@@ -109,7 +112,7 @@ export default function MenuSection() {
               <ZoomableImage
                 src="/chocolateCoveredStrawberries.png"
                 alt="Chocolate covered strawberries by Suly's Sweets"
-                className="absolute right-1 top-10 h-80 w-auto rounded-md object-contain sm:right-2 sm:-top-2 sm:h-90"
+                className={thumbClass}
               />
               <FlavorBlock lines={chocolateStrawberries.flavors} />
             </CategoryCard>
@@ -120,7 +123,7 @@ export default function MenuSection() {
               <ZoomableImage
                 src="/cheesecakes.png"
                 alt="9 inch cheesecake by Suly's Sweets"
-                className="absolute right-2 -bottom-10 h-60 w-auto rounded-md object-contain sm:right-3 sm:-bottom-25 sm:h-80"
+                className={thumbClass}
               />
               <FlavorBlock lines={cheesecakes9in.options} />
             </CategoryCard>
@@ -135,15 +138,13 @@ export default function MenuSection() {
               <Subcategory title={pies.title} price={pies.price} note={pies.note} />
               <FlavorBlock lines={pies.options} />
 
-              <div className="relative">
-                <Subcategory title={jellos.title} price={jellos.price} />
-                <ZoomableImage
-                  src="/gelatinas.png"
-                  alt="Jellos / Gelatinas by Suly's Sweets"
-                  className="absolute -top-8 right-1 h-60 w-auto rounded-md object-contain sm:-top-20 sm:right-2 sm:h-80"
-                />
-                <FlavorBlock lines={jellos.options} />
-              </div>
+              <Subcategory title={jellos.title} price={jellos.price} />
+              <ZoomableImage
+                src="/gelatinas.png"
+                alt="Jellos / Gelatinas by Suly's Sweets"
+                className={thumbClass}
+              />
+              <FlavorBlock lines={jellos.options} />
 
               <Subcategory title={bananaPudding.title} />
               <PriceList rows={bananaPudding.prices} />
