@@ -61,7 +61,13 @@ export default function Header() {
               mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
             }`}
           >
-            <img src="/logo.png" alt="Suly's Sweets logo" width={40} height={40} className="h-10 w-10 rounded-full" />
+            <img
+              src="/logo.png"
+              alt="Suly's Sweets logo"
+              width={40}
+              height={40}
+              className="h-20 w-20 rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform duration-300 hover:scale-105 hover:[transform:rotateY(-12deg)]"
+            />
             <span className="font-script text-2xl tracking-wide text-plum">Suly&apos;s Sweets</span>
           </a>
 

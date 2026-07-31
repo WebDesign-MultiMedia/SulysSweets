@@ -1,13 +1,20 @@
 export function CategoryCard({ title, inlinePrice, children }) {
   return (
-    <div className="group relative rounded-3xl bg-cream p-7 shadow-lg shadow-plum/10 ring-1 ring-plum/5 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-plum/20 hover:ring-mauve/40">
-      <div className="absolute inset-x-7 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-mauve-dark to-transparent transition-transform duration-300 group-hover:scale-x-100" />
-      <h3 className="flex flex-wrap items-baseline gap-2 font-display text-2xl text-plum">
-        {title}
-        {inlinePrice && <PriceTag>{inlinePrice}</PriceTag>}
-      </h3>
-      <div className="my-3 h-px w-full bg-mauve/25" />
-      <div className="flow-root space-y-3 text-sm text-plum/85">{children}</div>
+    <div className="[perspective:1200px]">
+      <div
+        className="group relative rounded-3xl bg-gradient-to-br from-cream to-[#ecdfd8] p-7 ring-1 ring-plum/5 transition-all duration-300 ease-out
+        shadow-[0_1px_1px_rgba(61,43,57,0.08),0_10px_18px_-8px_rgba(61,43,57,0.18),0_24px_40px_-18px_rgba(61,43,57,0.28),inset_0_1px_0_rgba(255,255,255,0.7)]
+        hover:ring-mauve/40 hover:[transform:translateY(-10px)_rotateX(4deg)_rotateY(-4deg)]
+        hover:shadow-[0_2px_3px_rgba(61,43,57,0.1),0_20px_28px_-8px_rgba(61,43,57,0.25),0_40px_55px_-20px_rgba(61,43,57,0.35),inset_0_1px_0_rgba(255,255,255,0.8)]"
+      >
+        <div className="absolute inset-x-7 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-mauve-dark to-transparent transition-transform duration-300 group-hover:scale-x-100" />
+        <h3 className="flex flex-wrap items-baseline gap-2 font-display text-2xl text-plum">
+          {title}
+          {inlinePrice && <PriceTag>{inlinePrice}</PriceTag>}
+        </h3>
+        <div className="my-3 h-px w-full bg-mauve/25" />
+        <div className="flow-root space-y-3 text-sm text-plum/85">{children}</div>
+      </div>
     </div>
   );
 }

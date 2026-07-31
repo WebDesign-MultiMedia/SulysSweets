@@ -39,8 +39,14 @@ export default function Hero() {
         <Reveal delay={200} className="relative mx-auto flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80">
           <div className="absolute inset-0 rounded-full border border-mauve/40" />
           <div className="absolute inset-6 rounded-full border border-mauve/25" />
-          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-cream shadow-xl shadow-plum/10 sm:h-52 sm:w-52">
-            <img src="/logo.png" alt="Suly's Sweets logo" width={122} height={122} className="h-auto w-full rounded-full sm:h-auto sm:w-full" />
+          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-cream to-[#e9dcd3] shadow-[0_2px_4px_rgba(61,43,57,0.1),0_15px_25px_-5px_rgba(61,43,57,0.25),0_35px_45px_-15px_rgba(61,43,57,0.3),inset_0_2px_2px_rgba(255,255,255,0.9),inset_0_-6px_10px_rgba(61,43,57,0.08)] sm:h-52 sm:w-52">
+            <img
+              src="/logo.png"
+              alt="Suly's Sweets logo"
+              width={122}
+              height={122}
+              className="h-auto w-full rounded-full ring-2 ring-white/50 shadow-[0_3px_10px_rgba(61,43,57,0.3),inset_0_2px_3px_rgba(255,255,255,0.5)] sm:h-auto sm:w-full"
+            />
           </div>
         </Reveal>
       </div>

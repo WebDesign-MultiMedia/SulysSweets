@@ -28,7 +28,7 @@ import {
 } from "../data/menu";
 
 const thumbClass =
-  "float-right ml-3 mb-2 h-32 w-32 rounded-xl object-cover shadow-sm shadow-plum/10 sm:h-36 sm:w-36";
+  "float-right ml-3 mb-2 sm:mb-20 h-32 w-32 rounded-xl object-cover ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.15),0_8px_14px_-6px_rgba(61,43,57,0.3)] sm:h-36 sm:w-36";
 
 export default function MenuSection() {
   return (
@@ -52,7 +52,7 @@ export default function MenuSection() {
 
           <Reveal
             delay={300}
-            className="mx-auto mt-6 max-w-xl rounded-3xl border border-mauve/40 bg-cream px-6 py-4 shadow-lg shadow-plum/10"
+            className="mx-auto mt-6 max-w-xl rounded-3xl border border-mauve/40 bg-gradient-to-br from-cream to-[#ecdfd8] px-6 py-4 shadow-[0_1px_1px_rgba(61,43,57,0.08),0_10px_18px_-8px_rgba(61,43,57,0.18),0_20px_32px_-16px_rgba(61,43,57,0.25),inset_0_1px_0_rgba(255,255,255,0.7)]"
           >
             <>
               {startingPriceNotice.map((line) => (
