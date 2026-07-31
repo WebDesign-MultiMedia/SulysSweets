@@ -40,7 +40,7 @@ export default function Hero() {
           <div className="absolute inset-0 rounded-full border border-mauve/40" />
           <div className="absolute inset-6 rounded-full border border-mauve/25" />
           <div className="flex h-44 w-44 items-center justify-center rounded-full bg-cream shadow-xl shadow-plum/10 sm:h-52 sm:w-52">
-            <img src="/logo.png" alt="Suly's Sweets logo" width={122} height={122} className="h-28 w-28 rounded-full sm:h-32 sm:w-32" />
+            <img src="/logo.png" alt="Suly's Sweets logo" width={122} height={122} className="h-auto w-full rounded-full sm:h-auto sm:w-full" />
           </div>
         </Reveal>
       </div>
