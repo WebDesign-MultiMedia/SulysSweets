@@ -43,7 +43,7 @@ export default function AboutSlideshow({ className }) {
 
   return (
     <>
-      <div className={`relative overflow-hidden ${className ?? ""}`}>
+      <div className={`relative overflow-hidden  ${className ?? ""}`}>
         {slides.map((slide, i) => (
           <img
             key={slide.src}
@@ -90,7 +90,7 @@ export default function AboutSlideshow({ className }) {
                   key={slide.src}
                   src={slide.src}
                   alt={slide.alt}
-                  className={`absolute inset-0 h-full w-full rounded-2xl object-contain shadow-2xl transition-opacity duration-[1500ms] ease-in-out ${
+                  className={`absolute  inset-0 h-full w-full rounded-2xl object-contain shadow-2xl transition-opacity duration-[1500ms] ease-in-out ${
                     i === index ? "opacity-100" : "opacity-0"
                   }`}
                 />
