@@ -1,6 +1,6 @@
 import Reveal from "./Reveal";
 
-export default function Hero() {
+export default function Hero({ onNavigate }) {
   return (
     <section id="home" className="relative overflow-hidden px-5 pt-32 pb-20 sm:px-8 sm:pt-40 sm:pb-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
@@ -29,6 +29,7 @@ export default function Hero() {
           <Reveal delay={360}>
             <a
               href="#menu"
+              onClick={(e) => onNavigate("menu", e)}
               className="mt-9 inline-flex items-center justify-center rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             >
               View the Menu

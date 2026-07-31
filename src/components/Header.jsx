@@ -8,7 +8,7 @@ const navLinks = [
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Header() {
+export default function Header({ activePage, onNavigate }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -57,6 +57,7 @@ export default function Header() {
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
           <a
             href="#home"
+            onClick={(e) => onNavigate("home", e)}
             className={`flex items-center gap-3 transition-all duration-700 ease-out ${
               mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
             }`}
@@ -166,8 +167,13 @@ export default function Header() {
                 >
                   <a
                     href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="block py-1.5 font-script text-3xl leading-tight text-plum transition-all duration-150 hover:text-terracotta active:scale-95"
+                    onClick={(e) => {
+                      setOpen(false);
+                      onNavigate(link.href.slice(1), e);
+                    }}
+                    className={`block py-1.5 font-script text-3xl leading-tight transition-all duration-150 hover:text-terracotta active:scale-95 ${
+                      activePage === link.href.slice(1) ? "text-terracotta" : "text-plum"
+                    }`}
                   >
                     {link.label}
                   </a>

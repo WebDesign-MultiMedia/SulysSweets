@@ -9,7 +9,7 @@ const navLinks = [
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   return (
     <footer className="bg-ivory px-5 py-14 text-plum sm:px-8">
       <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center">
@@ -19,7 +19,11 @@ export default function Footer() {
           <ul className="flex flex-wrap justify-center gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="text-sm text-plum/80 transition-colors hover:text-mauve-dark">
+                <a
+                  href={link.href}
+                  onClick={(e) => onNavigate(link.href.slice(1), e)}
+                  className="text-sm text-plum/80 transition-colors hover:text-mauve-dark"
+                >
                   {link.label}
                 </a>
               </li>
