@@ -1,19 +1,22 @@
 import Reveal from "./Reveal";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Hero({ onNavigate }) {
+  const { t } = useLanguage();
+
   return (
     <section id="home" className="relative overflow-hidden px-5 pt-32 pb-20 sm:px-8 sm:pt-40 sm:pb-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
         <div className="text-center lg:text-left">
           <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">
-            Handmade in Pelham Bay, Bronx
+            {t.hero.eyebrow}
           </Reveal>
 
           <Reveal delay={120}>
             <h1 className="mt-5 font-display text-[clamp(3rem,7vw,5.5rem)] leading-[1.05] text-plum">
-              Cakes made for
+              {t.hero.titleLine1}
               <br />
-              <span className="italic">your celebration</span>
+              <span className="italic">{t.hero.titleLine2}</span>
             </h1>
           </Reveal>
 
@@ -22,8 +25,7 @@ export default function Hero({ onNavigate }) {
             as="p"
             className="mx-auto mt-6 max-w-md text-base leading-relaxed text-plum/75 lg:mx-0"
           >
-            Every order is baked, filled, and decorated by hand — small batches,
-            real ingredients, and a design made just for you.
+            {t.hero.paragraph}
           </Reveal>
 
           <Reveal delay={360}>
@@ -32,7 +34,7 @@ export default function Hero({ onNavigate }) {
               onClick={(e) => onNavigate("menu", e)}
               className="mt-9 inline-flex items-center justify-center rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             >
-              View the Menu
+              {t.hero.cta}
             </a>
           </Reveal>
         </div>

@@ -1,15 +1,18 @@
 import Reveal from "./Reveal";
-import { thankYouNote } from "../data/menu";
+import { getMenuData } from "../data/menu";
 import { InstagramIcon } from "./icons";
-
-const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#menu", label: "Menu" },
-  { href: "#contact", label: "Contact" },
-];
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Footer({ onNavigate }) {
+  const { lang, t } = useLanguage();
+  const { thankYouNote } = getMenuData(lang);
+  const navLinks = [
+    { href: "#home", label: t.header.nav.home },
+    { href: "#about", label: t.header.nav.about },
+    { href: "#menu", label: t.header.nav.menu },
+    { href: "#contact", label: t.header.nav.contact },
+  ];
+
   return (
     <footer className="bg-ivory px-5 py-14 text-plum sm:px-8">
       <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center">
@@ -42,9 +45,7 @@ export default function Footer({ onNavigate }) {
 
           <p className="font-display text-lg italic">{thankYouNote}</p>
 
-          <p className="text-xs text-plum/50">
-            {`© ${new Date().getFullYear()} Suly's Sweets. All rights reserved.`}
-          </p>
+          <p className="text-xs text-plum/50">{t.footer.copyright(new Date().getFullYear())}</p>
         </>
       </Reveal>
     </footer>

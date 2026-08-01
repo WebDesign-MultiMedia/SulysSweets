@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { InstagramIcon } from "./icons";
-
-const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#menu", label: "Menu" },
-  { href: "#contact", label: "Contact" },
-];
+import { useLanguage } from "../i18n/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 
 export default function Header({ activePage, onNavigate }) {
+  const { t } = useLanguage();
+  const navLinks = [
+    { href: "#home", label: t.header.nav.home },
+    { href: "#about", label: t.header.nav.about },
+    { href: "#menu", label: t.header.nav.menu },
+    { href: "#contact", label: t.header.nav.contact },
+  ];
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -55,22 +57,32 @@ export default function Header({ activePage, onNavigate }) {
         }`}
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
-          <a
-            href="#home"
-            onClick={(e) => onNavigate("home", e)}
-            className={`flex items-center gap-3 transition-all duration-700 ease-out ${
-              mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
-            }`}
-          >
-            <img
-              src="/logo.png"
-              alt="Suly's Sweets logo"
-              width={40}
-              height={40}
-              className="h-20 w-20 rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform duration-300 hover:scale-105 hover:[transform:rotateY(-12deg)]"
-            />
-            <span className="font-script text-2xl tracking-wide text-plum"></span>
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="#home"
+              onClick={(e) => onNavigate("home", e)}
+              className={`flex items-center gap-3 transition-all duration-700 ease-out ${
+                mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+            >
+              <img
+                src="/logo.png"
+                alt="Suly's Sweets logo"
+                width={40}
+                height={40}
+                className="h-20 w-20 rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform duration-300 hover:scale-105 hover:[transform:rotateY(-12deg)]"
+              />
+              <span className="font-script text-2xl tracking-wide text-plum"></span>
+            </a>
+
+            <div
+              className={`md:hidden transition-all duration-700 ease-out ${
+                mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+            >
+              <LanguageToggle />
+            </div>
+          </div>
 
           <ul className="hidden items-center gap-10 md:flex">
             {navLinks.map((link, i) => (
@@ -89,6 +101,14 @@ export default function Header({ activePage, onNavigate }) {
                 </a>
               </li>
             ))}
+            <li
+              style={{ transitionDelay: mounted ? `${150 + navLinks.length * 90}ms` : "0ms" }}
+              className={`transition-all duration-700 ease-out ${
+                mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+            >
+              <LanguageToggle />
+            </li>
           </ul>
         </nav>
       </header>
@@ -126,7 +146,7 @@ export default function Header({ activePage, onNavigate }) {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={t.header.toggleMenuAria}
             aria-expanded={open}
             className="flex w-full items-center gap-2.5 px-4 py-3.5 transition-transform duration-150 active:scale-95"
           >
@@ -148,14 +168,14 @@ export default function Header({ activePage, onNavigate }) {
                 open ? "max-w-0 opacity-0" : "max-w-[4rem] opacity-100"
               }`}
             >
-              Menu
+              {t.header.mobileMenuLabel}
             </span>
           </button>
 
           <div
             className={`flex flex-col items-center px-6 pb-8 text-center transition-opacity duration-300 ${open ? "opacity-100 delay-150" : "opacity-0"}`}
           >
-            <p className="mb-1 font-script text-xl text-plum/50">Menu</p>
+            <p className="mb-1 font-script text-xl text-plum/50">{t.header.mobileMenuLabel}</p>
             <ul className="flex flex-col items-center">
               {navLinks.map((link, i) => (
                 <li

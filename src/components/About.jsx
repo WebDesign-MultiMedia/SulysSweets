@@ -1,7 +1,10 @@
 import Reveal from "./Reveal";
 import AboutSlideshow from "./AboutSlideshow";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function About() {
+  const { t } = useLanguage();
+
   return (
     <section id="about" className="bg-cream px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
@@ -14,30 +17,24 @@ export default function About() {
 
         <div className="text-center lg:text-left">
           <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">
-            About Us
+            {t.about.eyebrow}
           </Reveal>
           <Reveal delay={120}>
-            <h2 className="mt-4 font-display text-4xl text-plum sm:text-5xl">
-              A small bakery with a big heart
-            </h2>
+            <h2 className="mt-4 font-display text-4xl text-plum sm:text-5xl">{t.about.title}</h2>
           </Reveal>
           <Reveal
             delay={240}
             as="p"
             className="mx-auto mt-6 max-w-md text-base leading-relaxed text-plum/75 lg:mx-0"
           >
-            Suly&apos;s Sweets started as a passion for baking and grew into a
-            home bakery serving birthdays, quinceañeras, and every occasion
-            worth celebrating. Every cake, cupcake, and treat is made fresh,
-            by hand, right in Pelham Bay, Bronx.
+            {t.about.paragraph1}
           </Reveal>
           <Reveal
             delay={320}
             as="p"
             className="mx-auto mt-4 max-w-md text-base leading-relaxed text-plum/75 lg:mx-0"
           >
-            From classic flavors to fully custom designs, we work closely
-            with you to bring your vision to the table.
+            {t.about.paragraph2}
           </Reveal>
         </div>
       </div>

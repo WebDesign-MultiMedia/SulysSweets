@@ -1,18 +1,5 @@
 import { useState } from "react";
-
-const orderTypes = [
-  "Cakes",
-  "Cupcakes",
-  "Churro Cheesecake",
-  "9” Cheesecakes",
-  "Chocolate Covered Strawberries",
-  "Banana Loaf",
-  "Pies",
-  "Jellos / Gelatinas",
-  "Banana Pudding",
-  "Tiramisu",
-  "Other / Not sure yet",
-];
+import { useLanguage } from "../i18n/LanguageContext";
 
 const CONTACT_EMAIL = "sulyssweets24@gmail.com";
 
@@ -21,12 +8,15 @@ const inputClass =
 const labelClass = "mb-1.5 block text-xs font-medium tracking-wide text-mauve-dark uppercase";
 
 export default function OrderForm() {
+  const { t } = useLanguage();
+  const { orderForm } = t;
+
   const [values, setValues] = useState({
     name: "",
     email: "",
     phone: "",
     eventDate: "",
-    orderType: orderTypes[0],
+    orderTypeIndex: 0,
     details: "",
   });
   const [sent, setSent] = useState(false);
@@ -38,11 +28,12 @@ export default function OrderForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const subject = `Quote request — ${values.orderType} for ${values.name}`;
+    const orderType = orderForm.orderTypes[values.orderTypeIndex];
+    const subject = orderForm.email.subject(orderType, values.name);
     const divider = "─".repeat(32);
 
     const formattedDate = values.eventDate
-      ? new Date(`${values.eventDate}T00:00:00`).toLocaleDateString("en-US", {
+      ? new Date(`${values.eventDate}T00:00:00`).toLocaleDateString(orderForm.email.dateLocale, {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -51,17 +42,17 @@ export default function OrderForm() {
       : "";
 
     const bodyLines = [
-      "🎂 New Order Request — Suly's Sweets",
+      orderForm.email.heading,
       divider,
       "",
-      `Name:        ${values.name}`,
-      `Email:       ${values.email}`,
-      values.phone && `Phone:       ${values.phone}`,
-      formattedDate && `Event date:  ${formattedDate}`,
-      `Order type:  ${values.orderType}`,
+      `${orderForm.email.name}        ${values.name}`,
+      `${orderForm.email.email}       ${values.email}`,
+      values.phone && `${orderForm.email.phone}       ${values.phone}`,
+      formattedDate && `${orderForm.email.eventDate}  ${formattedDate}`,
+      `${orderForm.email.orderType}  ${orderType}`,
       "",
       divider,
-      "Details:",
+      orderForm.email.details,
       "",
       values.details,
       "",
@@ -79,16 +70,14 @@ export default function OrderForm() {
       className="mx-auto mt-10 max-w-xl rounded-3xl border border-mauve/30 bg-gradient-to-br from-ivory to-[#ecdcc0] px-6 py-7 text-left shadow-[0_1px_1px_rgba(61,43,57,0.08),0_10px_18px_-8px_rgba(61,43,57,0.18),0_20px_32px_-16px_rgba(61,43,57,0.25),inset_0_1px_0_rgba(255,255,255,0.7)] sm:px-8"
     >
       <p className="text-center text-xs font-medium tracking-[0.3em] text-mauve-dark uppercase">
-        Request a Quote
+        {orderForm.eyebrow}
       </p>
-      <h3 className="mt-2 text-center font-display text-2xl text-plum">
-        Tell us about your order
-      </h3>
+      <h3 className="mt-2 text-center font-display text-2xl text-plum">{orderForm.title}</h3>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass} htmlFor="name">
-            Name
+            {orderForm.nameLabel}
           </label>
           <input
             id="name"
@@ -97,13 +86,13 @@ export default function OrderForm() {
             value={values.name}
             onChange={handleChange("name")}
             className={inputClass}
-            placeholder="Your name"
+            placeholder={orderForm.namePlaceholder}
           />
         </div>
 
         <div>
           <label className={labelClass} htmlFor="email">
-            Email
+            {orderForm.emailLabel}
           </label>
           <input
             id="email"
@@ -112,13 +101,13 @@ export default function OrderForm() {
             value={values.email}
             onChange={handleChange("email")}
             className={inputClass}
-            placeholder="you@email.com"
+            placeholder={orderForm.emailPlaceholder}
           />
         </div>
 
         <div>
           <label className={labelClass} htmlFor="phone">
-            Phone <span className="normal-case text-plum/40">(optional)</span>
+            {orderForm.phoneLabel} <span className="normal-case text-plum/40">{orderForm.optional}</span>
           </label>
           <input
             id="phone"
@@ -126,13 +115,13 @@ export default function OrderForm() {
             value={values.phone}
             onChange={handleChange("phone")}
             className={inputClass}
-            placeholder="(555) 555-5555"
+            placeholder={orderForm.phonePlaceholder}
           />
         </div>
 
         <div className="min-w-0">
           <label className={labelClass} htmlFor="eventDate">
-            Event date <span className="normal-case text-plum/40">(optional)</span>
+            {orderForm.eventDateLabel} <span className="normal-case text-plum/40">{orderForm.optional}</span>
           </label>
           <input
             id="eventDate"
@@ -145,16 +134,16 @@ export default function OrderForm() {
 
         <div className="sm:col-span-2">
           <label className={labelClass} htmlFor="orderType">
-            What are you interested in?
+            {orderForm.interestLabel}
           </label>
           <select
             id="orderType"
-            value={values.orderType}
-            onChange={handleChange("orderType")}
+            value={values.orderTypeIndex}
+            onChange={(e) => setValues((v) => ({ ...v, orderTypeIndex: Number(e.target.value) }))}
             className={inputClass}
           >
-            {orderTypes.map((type) => (
-              <option key={type} value={type}>
+            {orderForm.orderTypes.map((type, i) => (
+              <option key={type} value={i}>
                 {type}
               </option>
             ))}
@@ -163,7 +152,7 @@ export default function OrderForm() {
 
         <div className="sm:col-span-2">
           <label className={labelClass} htmlFor="details">
-            Details
+            {orderForm.detailsLabel}
           </label>
           <textarea
             id="details"
@@ -172,7 +161,7 @@ export default function OrderForm() {
             value={values.details}
             onChange={handleChange("details")}
             className={`${inputClass} resize-none`}
-            placeholder="Flavor, size, design ideas, how many people, budget..."
+            placeholder={orderForm.detailsPlaceholder}
           />
         </div>
       </div>
@@ -181,13 +170,11 @@ export default function OrderForm() {
         type="submit"
         className="mt-6 w-full rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       >
-        Send Request
+        {orderForm.submit}
       </button>
 
       <p className="mt-3 text-center text-xs text-plum/60">
-        {sent
-          ? "Opening your email app with your request filled in — just hit send!"
-          : "This opens your email app with everything filled in so you can send it straight to us."}
+        {sent ? orderForm.noteAfterSend : orderForm.noteBeforeSend}
       </p>
     </form>
   );
