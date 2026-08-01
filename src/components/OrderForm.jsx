@@ -39,16 +39,34 @@ export default function OrderForm() {
     e.preventDefault();
 
     const subject = `Quote request — ${values.orderType} for ${values.name}`;
+    const divider = "─".repeat(32);
+
+    const formattedDate = values.eventDate
+      ? new Date(`${values.eventDate}T00:00:00`).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "";
+
     const bodyLines = [
-      `Name: ${values.name}`,
-      `Email: ${values.email}`,
-      values.phone && `Phone: ${values.phone}`,
-      values.eventDate && `Event date: ${values.eventDate}`,
-      `Order type: ${values.orderType}`,
+      "🎂 New Order Request — Suly's Sweets",
+      divider,
       "",
+      `Name:        ${values.name}`,
+      `Email:       ${values.email}`,
+      values.phone && `Phone:       ${values.phone}`,
+      formattedDate && `Event date:  ${formattedDate}`,
+      `Order type:  ${values.orderType}`,
+      "",
+      divider,
       "Details:",
+      "",
       values.details,
-    ].filter(Boolean);
+      "",
+      divider,
+    ].filter((line) => line !== false);
 
     const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     window.location.href = mailto;
@@ -112,7 +130,7 @@ export default function OrderForm() {
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label className={labelClass} htmlFor="eventDate">
             Event date <span className="normal-case text-plum/40">(optional)</span>
           </label>
@@ -121,7 +139,7 @@ export default function OrderForm() {
             type="date"
             value={values.eventDate}
             onChange={handleChange("eventDate")}
-            className={inputClass}
+            className={`${inputClass} min-w-0 max-w-full appearance-none`}
           />
         </div>
 

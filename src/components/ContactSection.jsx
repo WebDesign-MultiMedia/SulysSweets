@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Reveal from "./Reveal";
 import OrderForm from "./OrderForm";
 
@@ -9,6 +10,8 @@ const orderInfo = [
 ];
 
 export default function ContactSection() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
     <section id="contact" className="bg-cream px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-3xl text-center">
@@ -24,17 +27,25 @@ export default function ContactSection() {
         </Reveal>
 
         <Reveal delay={300}>
-          <a
-            href="mailto:sulyssweets24@gmail.com"
+          <button
+            type="button"
+            aria-expanded={isFormOpen}
+            onClick={() => setIsFormOpen((open) => !open)}
             className="mt-8 inline-flex items-center justify-center rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
           >
             Email Us
-          </a>
+          </button>
         </Reveal>
 
-        <Reveal delay={350}>
-          <OrderForm />
-        </Reveal>
+        <div
+          className={`grid overflow-hidden transition-all duration-500 ease-out ${
+            isFormOpen ? "mt-0 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="min-h-0">
+            <OrderForm />
+          </div>
+        </div>
 
         <Reveal
           delay={400}
