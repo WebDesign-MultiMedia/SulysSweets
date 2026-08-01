@@ -1,17 +1,18 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { InstagramIcon } from "./icons";
 
 const navLinks = [
+  { href: "#home", label: "Home" },
+  { href: "#about", label: "About" },
   { href: "#menu", label: "Menu" },
-  { href: "#policies", label: "Policies" },
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
+export default function Header({ activePage, onNavigate }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const panelRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -21,15 +22,28 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
+
     document.body.style.overflow = "hidden";
+
     const onKeyDown = (e) => {
       if (e.key === "Escape") setOpen(false);
     };
+    const onPointerDown = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) setOpen(false);
+    };
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
     };
   }, [open]);
 
@@ -37,55 +51,53 @@ export default function Header() {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "border-b border-plum/10 bg-cream/50 py-3 shadow-[0_8px_32px_rgba(78,61,66,0.12)] backdrop-blur-xl"
-            : "bg-transparent py-6"
+          scrolled ? "bg-ivory/90 py-3 shadow-sm backdrop-blur-sm" : "bg-transparent py-6"
         }`}
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <Image
+          <a
+            href="#home"
+            onClick={(e) => onNavigate("home", e)}
+            className={`flex items-center gap-3 transition-all duration-700 ease-out ${
+              mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+            }`}
+          >
+            <img
               src="/logo.png"
               alt="Suly's Sweets logo"
-              width={44}
-              height={44}
-              className="h-11 w-11 rounded-full ring-1 ring-white/60 shadow-[0_2px_6px_rgba(78,61,66,0.25)]"
+              width={40}
+              height={40}
+              className="h-20 w-20 rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform duration-300 hover:scale-105 hover:[transform:rotateY(-12deg)]"
             />
-            <span className="font-heading text-2xl text-plum">Suly&apos;s Sweets</span>
+            <span className="font-script text-2xl tracking-wide text-plum">Suly&apos;s Sweets</span>
           </a>
 
           <ul className="hidden items-center gap-10 md:flex">
-            {navLinks.map((link) => (
-              <li key={link.href}>
+            {navLinks.map((link, i) => (
+              <li
+                key={link.href}
+                style={{ transitionDelay: mounted ? `${150 + i * 90}ms` : "0ms" }}
+                className={`transition-all duration-700 ease-out ${
+                  mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+                }`}
+              >
                 <a
                   href={link.href}
-                  className="font-heading text-xl text-plum/80 transition-colors hover:text-sage-dark"
+                  className="text-sm tracking-wide text-plum/80 transition-colors hover:text-mauve-dark"
                 >
                   {link.label}
                 </a>
               </li>
             ))}
           </ul>
-
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-cream/60 ring-1 ring-plum/10 backdrop-blur-md md:hidden"
-          >
-            <span className="flex h-3.5 w-4 flex-col justify-between">
-              <span className="h-px w-full bg-plum" />
-              <span className="h-px w-full bg-plum" />
-              <span className="h-px w-full bg-plum" />
-            </span>
-          </button>
         </nav>
       </header>
 
-      {/* Mobile nav overlay + panel rendered as siblings of <header>, not
-          descendants — a backdrop-blur ancestor becomes a containing block
-          for fixed children and would break their viewport-relative
-          positioning. */}
+      {/* Rendered outside <header> — backdrop-filter on the scrolled header
+          would otherwise become a containing block for these fixed elements,
+          breaking their viewport-relative positioning. */}
+
+      {/* Dimmed backdrop behind the mobile nav panel — click to close. */}
       <div
         aria-hidden="true"
         onClick={() => setOpen(false)}
@@ -93,37 +105,97 @@ export default function Header() {
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
+
+      {/* Floating capsule that morphs from a compact "Menu" pill into a
+          small dropdown card, instead of pushing header content. */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-72 max-w-[80vw] bg-cream/95 shadow-2xl backdrop-blur-xl transition-transform duration-300 ease-out md:hidden ${
-          open ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed z-50 md:hidden transition-all duration-500 ease-out ${
+          mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+        } ${open ? "top-5 right-5" : scrolled ? "top-4 right-5" : "top-6 right-5"}`}
+        style={{
+          width: open ? "16rem" : "7.5rem",
+          height: open ? "22rem" : "3.25rem",
+        }}
       >
-        <div className="flex items-center justify-between px-6 py-6">
-          <span className="font-heading text-xl text-plum">Menu</span>
+        <div
+          ref={panelRef}
+          className={`relative h-full w-full overflow-hidden border border-plum/10 shadow-lg transition-all duration-500 ease-out ${
+            open ? "rounded-3xl bg-cream shadow-2xl" : "rounded-full bg-cream"
+          }`}
+        >
           <button
             type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Close menu"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-blush text-plum"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+            className="flex w-full items-center gap-2.5 px-4 py-3.5 transition-transform duration-150 active:scale-95"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            </svg>
+            <span className="flex h-4 w-4 flex-shrink-0 flex-col items-center justify-center gap-1">
+              <span
+                className={`h-px w-4 bg-plum transition-transform duration-300 ${
+                  open ? "translate-y-[3.5px] rotate-45" : ""
+                }`}
+              />
+              <span className={`h-px w-4 bg-plum transition-opacity duration-300 ${open ? "opacity-0" : ""}`} />
+              <span
+                className={`h-px w-4 bg-plum transition-transform duration-300 ${
+                  open ? "-translate-y-[3.5px] -rotate-45" : ""
+                }`}
+              />
+            </span>
+            <span
+              className={`overflow-hidden whitespace-nowrap font-script text-xl leading-none text-plum transition-all duration-300 ${
+                open ? "max-w-0 opacity-0" : "max-w-[4rem] opacity-100"
+              }`}
+            >
+              Menu
+            </span>
           </button>
+
+          <div
+            className={`flex flex-col items-center px-6 pb-8 text-center transition-opacity duration-300 ${open ? "opacity-100 delay-150" : "opacity-0"}`}
+          >
+            <p className="mb-1 font-script text-xl text-plum/50">Menu</p>
+            <ul className="flex flex-col items-center">
+              {navLinks.map((link, i) => (
+                <li
+                  key={link.href}
+                  style={{ transitionDelay: open ? `${150 + i * 70}ms` : "0ms" }}
+                  className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                    open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                  }`}
+                >
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      setOpen(false);
+                      onNavigate(link.href.slice(1), e);
+                    }}
+                    className={`block py-1.5 font-script text-3xl leading-tight transition-all duration-150 hover:text-terracotta active:scale-95 ${
+                      activePage === link.href.slice(1) ? "text-terracotta" : "text-plum"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="https://www.instagram.com/sulys_sweets"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              style={{ transitionDelay: open ? `${150 + navLinks.length * 70}ms` : "0ms" }}
+              className={`mt-6 flex items-center gap-2 text-sm tracking-wide text-plum/70 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:text-terracotta ${
+                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+              }`}
+            >
+              <InstagramIcon className="h-5 w-5" />
+              @sulys_sweets
+            </a>
+          </div>
         </div>
-        <ul className="flex flex-col items-start gap-1 px-6">
-          {navLinks.map((link) => (
-            <li key={link.href} className="w-full">
-              <a
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="block py-3 font-heading text-3xl text-plum transition-colors hover:text-sage-dark"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
       </div>
     </>
   );
