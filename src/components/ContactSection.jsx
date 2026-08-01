@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import OrderForm from "./OrderForm";
 
 const orderInfo = [
   "50% non-refundable deposit required",
@@ -24,11 +25,15 @@ export default function ContactSection() {
 
         <Reveal delay={300}>
           <a
-            href="mailto:hello@sulyssweets.com"
+            href="mailto:sulyssweets24@gmail.com"
             className="mt-8 inline-flex items-center justify-center rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
           >
             Email Us
           </a>
+        </Reveal>
+
+        <Reveal delay={350}>
+          <OrderForm />
         </Reveal>
 
         <Reveal
