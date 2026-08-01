@@ -2,20 +2,26 @@
   "name": "sulys-sweets",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "next": "^15.5.22",
+    "three": "^0.170.0",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/drei": "^10.7.7",
+    "framer-motion": "^12.43.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4",
-    "@vitejs/plugin-react": "^4",
+    "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4",
-    "vite": "^6"
+    "eslint": "^9",
+    "eslint-config-next": "^15.5.22",
+    "@eslint/eslintrc": "^3"
   }
 }
