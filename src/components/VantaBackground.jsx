@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
 // Bakery palette (see src/index.css @theme):
-// blush #f8ece9, ivory #f7e8d0, mauve #b98c8c, mauve-dark #9c6c6c, bronze #a98859
+// blush #f8ece9, ivory #f7e8d0, mauve #b98c8c, mauve-dark #9c6c6c, bronze #a98859, terracotta #c2703d
 const FOG_OPTIONS = {
   highlightColor: 0xf8ece9, // blush
-  midtoneColor: 0xd9b98c, // warm sand between ivory and bronze
-  lowlightColor: 0xb98c8c, // mauve
+  midtoneColor: 0xc2703d, // terracotta — reads clearly against the light base
+  lowlightColor: 0x9c6c6c, // mauve-dark — deeper shadow for visible depth
   baseColor: 0xf7e8d0, // ivory
-  blurFactor: 0.6,
-  speed: 1.2,
-  zoom: 0.8,
+  blurFactor: 0.45,
+  speed: 1.3,
+  zoom: 0.9,
 };
 
 export default function VantaBackground() {
