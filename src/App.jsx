@@ -6,6 +6,7 @@ import MenuSection from "./components/MenuSection";
 import InstagramSection from "./components/InstagramSection";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
+import VantaBackground from "./components/VantaBackground";
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <div>
+      <VantaBackground />
       <Header activePage={mobilePage} onNavigate={handleNavigate} />
       <main>
         <div className={pageClass("home")}>

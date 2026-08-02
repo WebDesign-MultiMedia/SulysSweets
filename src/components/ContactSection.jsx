@@ -8,7 +8,7 @@ export default function ContactSection() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
-    <section id="contact" className="bg-cream px-5 py-20 sm:px-8 sm:py-28">
+    <section id="contact" className="bg-cream/85 px-5 py-20 backdrop-blur-md sm:px-8 sm:py-28">
       <div className="mx-auto max-w-3xl text-center">
         <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">
           {t.contact.eyebrow}

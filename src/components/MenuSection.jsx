@@ -154,7 +154,7 @@ export default function MenuSection() {
   const activeCategory = categories.find((cat) => cat.id === active) ?? categories[0];
 
   return (
-    <section id="menu" className="bg-ivory px-5 py-20 sm:px-8 sm:py-28">
+    <section id="menu" className="bg-ivory/85 px-5 py-20 backdrop-blur-md sm:px-8 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">

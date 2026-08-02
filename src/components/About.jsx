@@ -6,7 +6,7 @@ export default function About() {
   const { t } = useLanguage();
 
   return (
-    <section id="about" className="bg-cream px-5 py-20 sm:px-8 sm:py-28">
+    <section id="about" className="bg-cream/85 px-5 py-20 backdrop-blur-md sm:px-8 sm:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
         <Reveal className="relative mx-auto aspect-square w-full max-w-sm">
           <div className="h-full w-full  rounded-[2rem] bg-gradient-to-br from-ivory to-[#ecdcc0] shadow-[0_1px_1px_rgba(61,43,57,0.08),0_14px_24px_-10px_rgba(61,43,57,0.2),0_30px_45px_-20px_rgba(61,43,57,0.3),inset_0_1px_0_rgba(255,255,255,0.7)]" />
