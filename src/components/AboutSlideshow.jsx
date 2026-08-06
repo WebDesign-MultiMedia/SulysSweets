@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 const slides = [
-  { src: "/SlideShow/whiteCake.jpg", alt: "White cake by Suly's Sweets" },
-  { src: "/SlideShow/strawberriesCakes.jpg", alt: "Strawberry cake by Suly's Sweets" },
-  { src: "/SlideShow/hannaMontanaCake.jpg", alt: "Hannah Montana themed cake by Suly's Sweets" },
-  { src: "/SlideShow/churroCheesecake.jpg", alt: "Churro cheesecake by Suly's Sweets" },
-  { src: "/SlideShow/cupcakes.jpg", alt: "Custom cupcakes by Suly's Sweets" },
-  { src: "/SlideShow/cheesecakes.jpg", alt: "9 inch cheesecake by Suly's Sweets" },
-  { src: "/SlideShow/chocolateCoveredStrawberries.jpg", alt: "Chocolate covered strawberries by Suly's Sweets" },
-  { src: "/SlideShow/gelatinas.jpg", alt: "Jellos / Gelatinas by Suly's Sweets" },
-  { src: "/SlideShow/cookies.jpg", alt: "Cookies by Suly's Sweets" },
-  { src: "/SlideShow/flan.jpg", alt: "Flan by Suly's Sweets" },
-  { src: "/SlideShow/ChocoFlan.jpg", alt: "Choco flan by Suly's Sweets" },
+  { src: "/SlideShow/whiteCake.png", alt: "White cake by Suly's Sweets" },
+  { src: "/SlideShow/strawberriesCakes.png", alt: "Strawberry cake by Suly's Sweets" },
+  { src: "/SlideShow/hannaMontanaCake.png", alt: "Hannah Montana themed cake by Suly's Sweets" },
+  { src: "/SlideShow/churroCheesecake.png", alt: "Churro cheesecake by Suly's Sweets" },
+  { src: "/SlideShow/cupcakes.png", alt: "Custom cupcakes by Suly's Sweets" },
+  { src: "/SlideShow/cheesecakes.png", alt: "9 inch cheesecake by Suly's Sweets" },
+  { src: "/SlideShow/chocolateCoveredStrawberries.png", alt: "Chocolate covered strawberries by Suly's Sweets" },
+  { src: "/SlideShow/gelatinas.png", alt: "Jellos / Gelatinas by Suly's Sweets" },
+  { src: "/SlideShow/cookies.png", alt: "Cookies by Suly's Sweets" },
+  { src: "/SlideShow/flan.png", alt: "Flan by Suly's Sweets" },
+  { src: "/SlideShow/ChocoFlan.png", alt: "Choco flan by Suly's Sweets" },
 ];
 
 export default function AboutSlideshow({ className }) {

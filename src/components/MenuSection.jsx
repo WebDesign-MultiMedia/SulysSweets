@@ -42,7 +42,7 @@ function buildCategories(menu, t) {
           <Label>{t.menu.startingPrices}</Label>
           <PriceList rows={cakes.startingPrices} />
           <ZoomableImage
-            src="/SlideShow/whiteCake.jpg"
+            src="/SlideShow/whiteCake.png"
             alt="White cake by Suly's Sweets"
             className={thumbClass}
           />
@@ -59,7 +59,7 @@ function buildCategories(menu, t) {
         <CategoryCard title={churroCheesecake.title}>
           <InlinePrice>{churroCheesecake.priceLine}</InlinePrice>
           <ZoomableImage
-            src="/churroCheesecake.jpg"
+            src="/SlideShow/churroCheesecake.png"
             alt="Churro cheesecake by Suly's Sweets"
             className={thumbClass}
           />
@@ -75,7 +75,7 @@ function buildCategories(menu, t) {
           <Label>{t.menu.byTheDozen}</Label>
           <PriceList rows={cupcakes.prices} />
           <ZoomableImage
-            src="/cupcakes.jpg"
+            src="/SlideShow/cupcakes.png"
             alt="Custom cupcake dozen by Suly's Sweets"
             className={thumbClass}
           />
@@ -91,7 +91,7 @@ function buildCategories(menu, t) {
         <CategoryCard title={chocolateStrawberries.title}>
           <PriceList rows={chocolateStrawberries.prices} />
           <ZoomableImage
-            src="/chocolateCoveredStrawberries.jpg"
+            src="/SlideShow/chocolateCoveredStrawberries.png"
             alt="Chocolate covered strawberries by Suly's Sweets"
             className={thumbClass}
           />
@@ -105,7 +105,7 @@ function buildCategories(menu, t) {
       node: (
         <CategoryCard title={cheesecakes9in.title} inlinePrice={cheesecakes9in.price}>
           <ZoomableImage
-            src="/cheesecakes.jpg"
+            src="/SlideShow/cheesecakes.png"
             alt="9 inch cheesecake by Suly's Sweets"
             className={thumbClass}
           />
@@ -127,7 +127,7 @@ function buildCategories(menu, t) {
 
           <Subcategory title={jellos.title} price={jellos.price} />
           <ZoomableImage
-            src="/gelatinas.jpg"
+            src="/SlideShow/gelatinas.png"
             alt="Jellos / Gelatinas by Suly's Sweets"
             className={thumbClass}
           />
