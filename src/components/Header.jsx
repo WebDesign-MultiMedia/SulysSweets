@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { InstagramIcon } from "./icons";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
@@ -107,6 +108,19 @@ export default function Header({ activePage, onNavigate }) {
                 mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
               }`}
             >
+              <Link
+                to="/holiday-order"
+                className="rounded-full bg-forest px-4 py-1.5 text-sm tracking-wide text-cashmere transition-transform hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Holiday Menu
+              </Link>
+            </li>
+            <li
+              style={{ transitionDelay: mounted ? `${150 + (navLinks.length + 1) * 90}ms` : "0ms" }}
+              className={`transition-all duration-700 ease-out ${
+                mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+            >
               <LanguageToggle />
             </li>
           </ul>
@@ -201,12 +215,23 @@ export default function Header({ activePage, onNavigate }) {
               ))}
             </ul>
 
+            <Link
+              to="/holiday-order"
+              onClick={() => setOpen(false)}
+              style={{ transitionDelay: open ? `${150 + navLinks.length * 70}ms` : "0ms" }}
+              className={`mt-4 rounded-full bg-forest px-5 py-2 text-sm tracking-wide text-cashmere transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+              }`}
+            >
+              Holiday Menu
+            </Link>
+
             <a
               href="https://www.instagram.com/sulys_sweets"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              style={{ transitionDelay: open ? `${150 + navLinks.length * 70}ms` : "0ms" }}
+              style={{ transitionDelay: open ? `${150 + (navLinks.length + 1) * 70}ms` : "0ms" }}
               className={`mt-6 flex items-center gap-2 text-sm tracking-wide text-plum/70 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:text-terracotta ${
                 open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
               }`}

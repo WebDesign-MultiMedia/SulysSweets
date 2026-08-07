@@ -16,7 +16,7 @@ import { getMenuData } from "../data/menu";
 import { useLanguage } from "../i18n/LanguageContext";
 
 const thumbClass =
-  "float-right ml-3 mb-2 sm:mb-20 h-32 w-32 rounded-xl object-cover ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.15),0_8px_14px_-6px_rgba(61,43,57,0.3)] sm:h-36 sm:w-36";
+  "float-right ml-3 mb-2 h-32 w-32 rounded-xl object-cover ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.15),0_8px_14px_-6px_rgba(61,43,57,0.3)] sm:h-36 sm:w-36";
 
 function buildCategories(menu, t) {
   const {

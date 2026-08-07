@@ -11,9 +11,20 @@
   --color-terracotta: #c2703d;
   --color-crimson: #b23b3b;
 
+  /* Holiday storefront palette */
+  --color-cashmere: #f3e6d8;
+  --color-espresso: #4e3d42;
+  --color-forest: #1e3a2b;
+  --color-forest-light: #2c5240;
+  --color-gold: #cda449;
+  --color-gold-light: #e6c878;
+  --color-holly: #8f1f2b;
+
   --font-display: "Playfair Display", serif;
   --font-body: "Poppins", sans-serif;
   --font-script: "Alex Brush", cursive;
+  --font-holiday-script: "Great Vibes", cursive;
+  --font-holiday-body: "Inter", sans-serif;
 }
 
 html {
@@ -35,4 +46,70 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
+}
+
+@keyframes holiday-snowfall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(360deg);
+  }
+}
+
+@keyframes holiday-twinkle {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes holiday-drift-a {
+  0%, 100% {
+    transform: translate(-10%, -8%) scale(1);
+  }
+  50% {
+    transform: translate(8%, 6%) scale(1.15);
+  }
+}
+
+@keyframes holiday-drift-b {
+  0%, 100% {
+    transform: translate(8%, 10%) scale(1);
+  }
+  50% {
+    transform: translate(-6%, -10%) scale(1.1);
+  }
+}
+
+@keyframes holiday-drift-c {
+  0%, 100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  50% {
+    transform: translate(6%, -8%) scale(1.2);
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-area {
+    position: static !important;
+    inset: auto !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+  }
+
+  body {
+    background: white !important;
+  }
 }
