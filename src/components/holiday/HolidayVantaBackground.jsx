@@ -73,6 +73,26 @@ export default function HolidayVantaBackground() {
   const [vantaReady, setVantaReady] = useState(false);
   const useVanta = capable && !reducedMotion;
 
+  // The forest backdrop is painted by fixed-position layers, not the real
+  // document background. On iOS Safari, rubber-band overscroll can reveal
+  // whatever is *behind* fixed elements for a frame — without this, that's
+  // the site-wide ivory `body` background, which flashes in as "white".
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlBg = html.style.backgroundColor;
+    const prevBodyBg = body.style.backgroundColor;
+    const prevOverscroll = html.style.overscrollBehaviorY;
+    html.style.backgroundColor = "#1e3a2b";
+    body.style.backgroundColor = "#1e3a2b";
+    html.style.overscrollBehaviorY = "none";
+    return () => {
+      html.style.backgroundColor = prevHtmlBg;
+      body.style.backgroundColor = prevBodyBg;
+      html.style.overscrollBehaviorY = prevOverscroll;
+    };
+  }, []);
+
   useEffect(() => {
     if (!useVanta || !ref.current) return;
 
