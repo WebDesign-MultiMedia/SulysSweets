@@ -1,10 +1,13 @@
 import { useMemo } from "react";
 import { Snowflake } from "lucide-react";
+import useMatchMedia from "../../hooks/useMatchMedia";
 
 const FLAKE_COUNT = 28;
+const FLAKE_COUNT_MOBILE = 55;
+const MOBILE_QUERY = "(max-width: 1023px)";
 
-function randomFlakes() {
-  return Array.from({ length: FLAKE_COUNT }, (_, i) => ({
+function randomFlakes(count) {
+  return Array.from({ length: count }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     size: 6 + Math.random() * 14,
@@ -17,7 +20,9 @@ function randomFlakes() {
 }
 
 export default function Snowfall() {
-  const flakes = useMemo(randomFlakes, []);
+  const isMobile = useMatchMedia(MOBILE_QUERY);
+  const count = isMobile ? FLAKE_COUNT_MOBILE : FLAKE_COUNT;
+  const flakes = useMemo(() => randomFlakes(count), [count]);
 
   return (
     <div className="no-print pointer-events-none fixed inset-0 z-30 overflow-hidden" aria-hidden="true">

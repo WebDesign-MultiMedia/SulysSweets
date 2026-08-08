@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image as ImageIcon, List as ListIcon } from "lucide-react";
+import { Image as ImageIcon, List as ListIcon, TreePine } from "lucide-react";
 import { HolidayCartProvider } from "../context/HolidayCartContext";
 import HolidayNav from "../components/holiday/HolidayNav";
 import HolidayHero from "../components/holiday/HolidayHero";
@@ -24,7 +24,11 @@ function HolidayOrderContent() {
       <div id="menu" className="relative mx-auto max-w-6xl px-5 pb-16 sm:px-8">
         <Garland />
 
-        <h2 className="text-center font-display text-3xl text-cashmere">Shop the Menu</h2>
+        <h2 className="flex items-center justify-center gap-3 text-center font-display text-3xl text-cashmere">
+          <TreePine className="h-6 w-6 text-gold-light" aria-hidden="true" />
+          Shop the Menu
+          <TreePine className="h-6 w-6 -scale-x-100 text-gold-light" aria-hidden="true" />
+        </h2>
 
         <div className="mt-6 flex justify-center">
           <div className="inline-flex rounded-full bg-white/70 p-1 ring-1 ring-gold/30">

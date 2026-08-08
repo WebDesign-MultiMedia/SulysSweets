@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Snowflake } from "lucide-react";
 import { computeUnitPrice, defaultSelections, formatUSD, getDisplayImage } from "../../data/holidayMenu";
 import { useHolidayCart } from "../../context/HolidayCartContext";
 import ZoomableImage from "../ZoomableImage";
@@ -25,14 +25,19 @@ export default function ProductCard({ product, showImages = true }) {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-forest/10 bg-cashmere shadow-[0_1px_1px_rgba(78,61,66,0.06),0_8px_14px_-8px_rgba(78,61,66,0.15)] transition-shadow duration-200 hover:shadow-[0_10px_20px_-8px_rgba(78,61,66,0.25)]">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-forest bg-cashmere shadow-[5px_5px_0_0_#8f1f2b] transition-all duration-150 ease-out hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[8px_8px_0_0_#8f1f2b]">
+      {/* Flat holiday badge — no gradient, no blur, just a solid mark. */}
+      <div className="absolute top-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-holly">
+        <Snowflake className="h-4 w-4 text-cashmere" strokeWidth={2} />
+      </div>
+
       {hasImageSlot && (
-        <div className="aspect-[4/3] w-full overflow-hidden bg-white/40">
+        <div className="aspect-[4/3] w-full overflow-hidden border-b-2 border-forest bg-white/40">
           {displayImage && (
             <ZoomableImage
               src={displayImage}
               alt={product.name}
-              className="h-full w-full scale-125 object-contain"
+              className="h-full w-full scale-165 object-contain"
             />
           )}
         </div>
@@ -40,9 +45,9 @@ export default function ProductCard({ product, showImages = true }) {
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="font-display text-xl text-espresso">{product.name}</h3>
+          <h3 className="font-display text-xl text-forest">{product.name}</h3>
           {product.description && <p className="mt-0.5 text-sm text-espresso/80">{product.description}</p>}
-          <div className="mt-2 h-px w-10 bg-gold/50" />
+          <div className="mt-2 h-1 w-10 rounded-full bg-holly" />
         </div>
 
         {product.variantGroups.map((group) => (
@@ -56,10 +61,10 @@ export default function ProductCard({ product, showImages = true }) {
                     key={option.id}
                     type="button"
                     onClick={() => handleSelect(group.id, option.id)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    className={`rounded-full border-2 px-3 py-1.5 text-xs font-medium transition-colors ${
                       active
-                        ? "border-forest bg-forest text-cashmere"
-                        : "border-espresso/20 bg-white/60 text-espresso hover:border-forest/50"
+                        ? "border-holly bg-holly text-cashmere"
+                        : "border-forest/20 bg-white text-espresso hover:border-forest/50"
                     }`}
                   >
                     {option.label}
@@ -72,9 +77,9 @@ export default function ProductCard({ product, showImages = true }) {
         ))}
 
         <div className="flex items-center justify-between pt-2">
-          <span className="font-display text-lg text-espresso">{formatUSD(unitPrice)}</span>
+          <span className="font-display text-lg text-forest">{formatUSD(unitPrice)}</span>
 
-          <div className="flex items-center gap-2 rounded-full border border-espresso/20 bg-white/60 px-1.5 py-1">
+          <div className="flex items-center gap-2 rounded-full border-2 border-forest/20 bg-white px-1.5 py-1">
             <button
               type="button"
               aria-label="Decrease quantity"
@@ -98,7 +103,7 @@ export default function ProductCard({ product, showImages = true }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-1 w-full rounded-full bg-forest px-6 py-2.5 text-sm font-medium tracking-wide text-cashmere uppercase transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+          className="mt-1 w-full rounded-full border-2 border-forest bg-forest px-6 py-2.5 text-sm font-medium tracking-wide text-cashmere uppercase transition-colors duration-150 hover:bg-holly hover:border-holly active:bg-forest"
         >
           Add to Cart
         </button>
