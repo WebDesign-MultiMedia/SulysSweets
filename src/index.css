@@ -68,33 +68,6 @@ h1, h2, h3, h4 {
   }
 }
 
-@keyframes holiday-drift-a {
-  0%, 100% {
-    transform: translate(-10%, -8%) scale(1);
-  }
-  50% {
-    transform: translate(8%, 6%) scale(1.15);
-  }
-}
-
-@keyframes holiday-drift-b {
-  0%, 100% {
-    transform: translate(8%, 10%) scale(1);
-  }
-  50% {
-    transform: translate(-6%, -10%) scale(1.1);
-  }
-}
-
-@keyframes holiday-drift-c {
-  0%, 100% {
-    transform: translate(0%, 0%) scale(1);
-  }
-  50% {
-    transform: translate(6%, -8%) scale(1.2);
-  }
-}
-
 @media print {
   .no-print {
     display: none !important;

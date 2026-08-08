@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import useBodyBackground from "../../hooks/useBodyBackground";
 
-// Christmas palette (see src/index.css @theme): forest #1e3a2b (background),
-// a brighter green (mesh lines/dots) for visible contrast against it.
+// Christmas palette (see src/index.css @theme): forest #1e3a2b backdrop
+// with a soft, low-contrast mesh — Topology has no line-density option, so
+// a dimmer color plus a larger `scale` (spreads the pattern out, fewer
+// strands visible at once) is how it's toned down instead of removed.
 const TOPOLOGY_OPTIONS = {
-  color: 0x4f9e6c, // bright green mesh
-  backgroundColor: 0x1e3a2b, // forest
+  color: 0x9fb8ac,
+  backgroundColor: 0x1e3a2b,
 };
+
+const BACKDROP_COLOR = "#1e3a2b";
 
 const MOBILE_QUERY = "(max-width: 1023px)";
 
@@ -52,16 +57,6 @@ function whenIdle(callback, timeout = 2000) {
   return () => window.clearTimeout(id);
 }
 
-function CssBackdrop() {
-  return (
-    <div className="fixed inset-0 -z-20 overflow-hidden bg-forest" aria-hidden="true">
-      <div className="absolute -top-1/4 -left-1/4 h-[70vmax] w-[70vmax] rounded-full bg-forest-light/50 blur-3xl motion-safe:[animation:holiday-drift-a_22s_ease-in-out_infinite]" />
-      <div className="absolute -right-1/4 -bottom-1/4 h-[65vmax] w-[65vmax] rounded-full bg-gold/10 blur-3xl motion-safe:[animation:holiday-drift-b_26s_ease-in-out_infinite]" />
-      <div className="absolute top-1/3 right-1/4 h-[50vmax] w-[50vmax] rounded-full bg-forest-light/30 blur-3xl motion-safe:[animation:holiday-drift-c_30s_ease-in-out_infinite]" />
-    </div>
-  );
-}
-
 export default function HolidayVantaBackground() {
   const ref = useRef(null);
   const effectRef = useRef(null);
@@ -73,25 +68,10 @@ export default function HolidayVantaBackground() {
   const [vantaReady, setVantaReady] = useState(false);
   const useVanta = capable && !reducedMotion;
 
-  // The forest backdrop is painted by fixed-position layers, not the real
-  // document background. On iOS Safari, rubber-band overscroll can reveal
-  // whatever is *behind* fixed elements for a frame — without this, that's
-  // the site-wide ivory `body` background, which flashes in as "white".
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtmlBg = html.style.backgroundColor;
-    const prevBodyBg = body.style.backgroundColor;
-    const prevOverscroll = html.style.overscrollBehaviorY;
-    html.style.backgroundColor = "#1e3a2b";
-    body.style.backgroundColor = "#1e3a2b";
-    html.style.overscrollBehaviorY = "none";
-    return () => {
-      html.style.backgroundColor = prevHtmlBg;
-      body.style.backgroundColor = prevBodyBg;
-      html.style.overscrollBehaviorY = prevOverscroll;
-    };
-  }, []);
+  // The canvas is painted via fixed-position layers, not the real document
+  // background. Keep <html>/<body> in sync so iOS Safari's rubber-band
+  // overscroll doesn't flash the site-wide ivory background for a frame.
+  useBodyBackground(BACKDROP_COLOR);
 
   useEffect(() => {
     if (!useVanta || !ref.current) return;
@@ -104,6 +84,9 @@ export default function HolidayVantaBackground() {
         Promise.all([import("p5"), import("vanta/dist/vanta.topology.min")]).then(
           ([{ default: p5 }, { default: TOPOLOGY }]) => {
             if (cancelled || !ref.current) return;
+            // Silences p5's friendly-error-system console noise (harmless
+            // global-name-collision warnings unrelated to this app).
+            p5.disableFriendlyErrors = true;
             effectRef.current = TOPOLOGY({
               el: ref.current,
               p5,
@@ -112,10 +95,8 @@ export default function HolidayVantaBackground() {
               gyroControls: false,
               minHeight: 200.0,
               minWidth: 200.0,
-              scale: 1.0,
-              // Lower internal render resolution on phones — same effect,
-              // cheaper per-frame cost on weaker GPUs.
-              scaleMobile: 0.65,
+              scale: 1.8,
+              scaleMobile: 1.8,
               ...TOPOLOGY_OPTIONS,
             });
             setVantaReady(true);
@@ -142,18 +123,24 @@ export default function HolidayVantaBackground() {
     };
   }, [useVanta, isMobile]);
 
-  if (!useVanta) return <CssBackdrop />;
-
+  // No negative z-index here: these are `position: fixed`, so in the root
+  // stacking context a negative z-index paints *behind the document body's
+  // own background* (not just behind normal content) — which silently hid
+  // this canvas entirely once the body got an opaque background color (see
+  // useBodyBackground above). Being first in the DOM is enough to keep it
+  // behind every later sibling without needing z-index at all.
   return (
     <>
-      <CssBackdrop />
-      <div
-        ref={ref}
-        aria-hidden="true"
-        className={`fixed inset-0 -z-10 transition-opacity duration-700 ${
-          vantaReady ? "opacity-100" : "opacity-0"
-        }`}
-      />
+      <div className="fixed inset-0 bg-forest" aria-hidden="true" />
+      {useVanta && (
+        <div
+          ref={ref}
+          aria-hidden="true"
+          className={`fixed inset-0 transition-opacity duration-700 ${
+            vantaReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
     </>
   );
 }
