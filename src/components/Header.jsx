@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Home as HomeIcon, Info, Image as ImageIcon, UtensilsCrossed, Mail } from "lucide-react";
+import { Home as HomeIcon, Heart, Image as ImageIcon, UtensilsCrossed, Mail } from "lucide-react";
 import { InstagramIcon } from "./icons";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
@@ -13,7 +13,7 @@ const TILE_COLORS = ["bg-ivory"];
 // Icon per tile instead of a text label — keyed by the link's hash id.
 const TILE_ICONS = {
   home: HomeIcon,
-  about: Info,
+  about: Heart,
   gallery: ImageIcon,
   menu: UtensilsCrossed,
   contact: Mail,
@@ -172,12 +172,13 @@ export default function Header({ activePage, onNavigate }) {
           staggered scale/fade reveal, mobile only. */}
       <div
         ref={panelRef}
-        className={`fixed inset-0 z-50 grid grid-cols-2 auto-rows-fr md:hidden ${
-          open ? "" : "pointer-events-none"
+        className={`fixed inset-0 z-50 grid grid-cols-2 auto-rows-fr gap-3 bg-plum p-4 pt-24 transition-opacity duration-300 md:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
         {navLinks.map((link, i) => {
           const Icon = TILE_ICONS[link.href.slice(1)];
+          const active = activePage === link.href.slice(1);
           return (
             <a
               key={link.href}
@@ -188,11 +189,13 @@ export default function Header({ activePage, onNavigate }) {
                 onNavigate(link.href.slice(1), e);
               }}
               style={{ transitionDelay: open ? `${i * 60}ms` : "0ms" }}
-              className={`flex items-center justify-center border border-plum/10 p-6 text-plum transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+              className={`flex items-center justify-center rounded-2xl p-6 text-plum transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                 TILE_COLORS[i % TILE_COLORS.length]
-              } ${open ? "scale-100 opacity-100" : "scale-75 opacity-0"} ${
-                activePage === link.href.slice(1) ? "ring-4 ring-inset ring-plum/60" : ""
-              }`}
+              } ${
+                active
+                  ? "ring-2 ring-plum shadow-[3px_3px_0_0_#3d2b39]"
+                  : "shadow-[4px_4px_0_0_#3d2b39] hover:shadow-[2px_2px_0_0_#3d2b39] hover:translate-x-[2px] hover:translate-y-[2px]"
+              } ${open ? "scale-100 opacity-100" : "scale-75 opacity-0"}`}
             >
               <Icon className="h-9 w-9" strokeWidth={1.75} />
             </a>
@@ -203,7 +206,7 @@ export default function Header({ activePage, onNavigate }) {
           to="/holiday-order"
           onClick={() => setOpen(false)}
           style={{ transitionDelay: open ? `${navLinks.length * 60}ms` : "0ms" }}
-          className={`flex flex-col items-center justify-center gap-0.5 border border-cream/10 bg-forest p-6 text-center text-cashmere transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          className={`flex flex-col items-center justify-center gap-0.5 rounded-2xl bg-forest p-6 text-center text-cashmere shadow-[4px_4px_0_0_#0e2019] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#0e2019] ${
             open ? "scale-100 opacity-100" : "scale-75 opacity-0"
           }`}
         >
@@ -217,7 +220,7 @@ export default function Header({ activePage, onNavigate }) {
           rel="noopener noreferrer"
           onClick={() => setOpen(false)}
           style={{ transitionDelay: open ? `${(navLinks.length + 1) * 60}ms` : "0ms" }}
-          className={`col-span-2 flex items-center justify-center gap-2 border border-cream/10 bg-plum p-6 text-center text-cream transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          className={`col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-ivory p-6 text-center text-plum shadow-[4px_4px_0_0_#3d2b39] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#3d2b39] ${
             open ? "scale-100 opacity-100" : "scale-75 opacity-0"
           }`}
         >
