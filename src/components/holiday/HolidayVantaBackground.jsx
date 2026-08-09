@@ -95,8 +95,8 @@ export default function HolidayVantaBackground() {
               gyroControls: false,
               minHeight: 200.0,
               minWidth: 200.0,
-              scale: 1.2,
-              scaleMobile: 1.2,
+              scale: 1.8,
+              scaleMobile: 1.8,
               ...TOPOLOGY_OPTIONS,
             });
             setVantaReady(true);
@@ -137,7 +137,7 @@ export default function HolidayVantaBackground() {
           ref={ref}
           aria-hidden="true"
           className={`fixed inset-0 transition-opacity duration-700 ${
-            vantaReady ? "opacity-100" : "opacity-0"
+            vantaReady ? "opacity-50" : "opacity-0"
           }`}
         />
       )}
