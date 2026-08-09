@@ -92,11 +92,11 @@ export default function HolidayVantaBackground() {
               p5,
               mouseControls: true,
               touchControls: true,
-              gyroControls: true,
+              gyroControls: false,
               minHeight: 200.0,
               minWidth: 200.0,
-              scale: 1.0,
-              scaleMobile: 1.0,
+              scale: 1.2,
+              scaleMobile: 1.2,
               ...TOPOLOGY_OPTIONS,
             });
             setVantaReady(true);
