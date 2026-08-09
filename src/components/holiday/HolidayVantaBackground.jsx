@@ -95,21 +95,10 @@ export default function HolidayVantaBackground() {
               gyroControls: false,
               minHeight: 200.0,
               minWidth: 200.0,
-              scale: 1.8,
-              scaleMobile: 1.8,
+              scale: 1.0,
+              scaleMobile: 1.0,
               ...TOPOLOGY_OPTIONS,
             });
-            // Topology's own flow-field grid is sized once at setup from
-            // the canvas dimensions and never rebuilt — a later resize (eg.
-            // iOS Safari's toolbar collapsing when a scroll starts) makes
-            // it index past that grid and throw inside the p5 draw loop,
-            // which halts rendering entirely (the background "disappears"
-            // and never recovers). The canvas already fills the viewport
-            // via `fixed inset-0`, so it doesn't need to react to resize —
-            // drop Vanta's own listener rather than let it crash the loop.
-            if (effectRef.current?.resize) {
-              window.removeEventListener("resize", effectRef.current.resize);
-            }
             setVantaReady(true);
           },
         );
@@ -140,19 +129,14 @@ export default function HolidayVantaBackground() {
   // this canvas entirely once the body got an opaque background color (see
   // useBodyBackground above). Being first in the DOM is enough to keep it
   // behind every later sibling without needing z-index at all.
-  //
-  // `translateZ(0)` promotes both layers to their own GPU compositor layer.
-  // Without it, iOS Safari can drop a fixed-position layer for a frame right
-  // as a scroll gesture starts (it has to re-composite it onto the scroll
-  // layer), which reads as the background flashing/disappearing on scroll.
   return (
     <>
-      <div className="fixed inset-0 bg-forest [transform:translateZ(0)]" aria-hidden="true" />
+      <div className="fixed inset-0 bg-forest" aria-hidden="true" />
       {useVanta && (
         <div
           ref={ref}
           aria-hidden="true"
-          className={`fixed inset-0 [transform:translateZ(0)] transition-opacity duration-700 ${
+          className={`fixed inset-0 transition-opacity duration-700 ${
             vantaReady ? "opacity-100" : "opacity-0"
           }`}
         />

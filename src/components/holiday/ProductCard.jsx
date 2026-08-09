@@ -25,14 +25,9 @@ export default function ProductCard({ product, showImages = true }) {
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-forest bg-cashmere shadow-[5px_5px_0_0_#8f1f2b] transition-all duration-150 ease-out hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[8px_8px_0_0_#8f1f2b]">
-      {/* Flat holiday badge — no gradient, no blur, just a solid mark. */}
-      <div className="absolute top-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-holly">
-        <Snowflake className="h-4 w-4 text-cashmere" strokeWidth={2} />
-      </div>
-
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(30,58,43,0.06),0_10px_24px_-16px_rgba(30,58,43,0.25)] transition-shadow duration-200 hover:shadow-[0_1px_2px_rgba(30,58,43,0.08),0_18px_32px_-16px_rgba(30,58,43,0.35)]">
       {hasImageSlot && (
-        <div className="aspect-[4/3] w-full overflow-hidden border-b-2 border-forest bg-white/40">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-50">
           {displayImage && (
             <ZoomableImage
               src={displayImage}
@@ -40,20 +35,24 @@ export default function ProductCard({ product, showImages = true }) {
               className="h-full w-full scale-165 object-contain"
             />
           )}
+          <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
+            <Snowflake className="h-4 w-4 text-holly" strokeWidth={2} />
+          </div>
         </div>
       )}
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="font-display text-xl text-forest">{product.name}</h3>
-          {product.description && <p className="mt-0.5 text-sm text-espresso/80">{product.description}</p>}
-          <div className="mt-2 h-1 w-10 rounded-full bg-holly" />
+          <h3 className="text-sm font-semibold text-espresso">{product.name}</h3>
+          {product.description && <p className="mt-0.5 text-xs text-espresso/55">{product.description}</p>}
         </div>
 
         {product.variantGroups.map((group) => (
           <div key={group.id}>
-            <p className="mb-1.5 text-xs font-semibold tracking-wide text-forest uppercase">{group.label}</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="mb-1.5 text-[11px] font-medium tracking-wide text-espresso/50 uppercase">
+              {group.label}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
               {group.options.map((option) => {
                 const active = selections[group.id] === option.id;
                 return (
@@ -61,10 +60,10 @@ export default function ProductCard({ product, showImages = true }) {
                     key={option.id}
                     type="button"
                     onClick={() => handleSelect(group.id, option.id)}
-                    className={`rounded-full border-2 px-3 py-1.5 text-xs font-medium transition-colors ${
+                    className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
                       active
-                        ? "border-holly bg-holly text-cashmere"
-                        : "border-forest/20 bg-white text-espresso hover:border-forest/50"
+                        ? "border-forest bg-forest text-white"
+                        : "border-black/10 bg-white text-espresso/70 hover:border-forest/40"
                     }`}
                   >
                     {option.label}
@@ -76,15 +75,15 @@ export default function ProductCard({ product, showImages = true }) {
           </div>
         ))}
 
-        <div className="flex items-center justify-between pt-2">
-          <span className="font-display text-lg text-forest">{formatUSD(unitPrice)}</span>
+        <div className="mt-auto flex items-center justify-between pt-1">
+          <span className="text-base font-bold text-espresso">{formatUSD(unitPrice)}</span>
 
-          <div className="flex items-center gap-2 rounded-full border-2 border-forest/20 bg-white px-1.5 py-1">
+          <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-white px-1 py-1">
             <button
               type="button"
               aria-label="Decrease quantity"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="flex h-6 w-6 items-center justify-center rounded-full text-espresso transition-colors hover:bg-forest/10"
+              className="flex h-6 w-6 items-center justify-center rounded-md text-espresso/70 transition-colors hover:bg-black/5"
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
@@ -93,7 +92,7 @@ export default function ProductCard({ product, showImages = true }) {
               type="button"
               aria-label="Increase quantity"
               onClick={() => setQuantity((q) => q + 1)}
-              className="flex h-6 w-6 items-center justify-center rounded-full text-espresso transition-colors hover:bg-forest/10"
+              className="flex h-6 w-6 items-center justify-center rounded-md text-espresso/70 transition-colors hover:bg-black/5"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
@@ -103,7 +102,7 @@ export default function ProductCard({ product, showImages = true }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-1 w-full rounded-full border-2 border-forest bg-forest px-6 py-2.5 text-sm font-medium tracking-wide text-cashmere uppercase transition-colors duration-150 hover:bg-holly hover:border-holly active:bg-forest"
+          className="w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-forest-light"
         >
           Add to Cart
         </button>

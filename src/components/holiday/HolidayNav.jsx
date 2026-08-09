@@ -16,7 +16,7 @@ export default function HolidayNav() {
           Suly&apos;s Sweets
         </Link>
 
-        <p className="hidden font-holiday-script text-xl text-gold-light sm:block">
+        <p className="hidden font-holiday-script text-3xl text-gold-light sm:block">
           Christmas &amp; New Year&apos;s
         </p>
 

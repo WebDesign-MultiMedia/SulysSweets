@@ -8,6 +8,7 @@ import CartDrawer from "../components/holiday/CartDrawer";
 import Snowfall from "../components/holiday/Snowfall";
 import Garland from "../components/holiday/Garland";
 import HolidayVantaBackground from "../components/holiday/HolidayVantaBackground";
+import HolidayFooter from "../components/holiday/HolidayFooter";
 import { HOLIDAY_PRODUCTS } from "../data/holidayMenu";
 
 function HolidayOrderContent() {
@@ -67,10 +68,9 @@ function HolidayOrderContent() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-xs tracking-wide text-cashmere/60 uppercase">
-          With love, Suly&apos;s Sweets ♡
-        </p>
       </div>
+
+      <HolidayFooter />
 
       <CartDrawer />
     </div>

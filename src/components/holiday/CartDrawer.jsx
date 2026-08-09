@@ -233,19 +233,19 @@ export default function CartDrawer() {
                     <p className={`${labelClass} mt-4`}>
                       {fulfillment === "pickup" ? "Pickup" : "Delivery"} Date &amp; Time
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <input
                         type="date"
                         value={scheduledDate}
                         min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setScheduledDate(e.target.value)}
-                        className={inputClass}
+                        className={`${inputClass} min-w-0`}
                       />
                       <input
                         type="time"
                         value={scheduledTime}
                         onChange={(e) => setScheduledTime(e.target.value)}
-                        className={inputClass}
+                        className={`${inputClass} min-w-0`}
                       />
                     </div>
                   </div>
@@ -295,9 +295,18 @@ export default function CartDrawer() {
 
                 <button
                   type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-forest/30 px-6 py-2.5 text-sm font-medium tracking-wide text-forest uppercase transition-colors hover:bg-forest/10"
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  Continue Shopping
+                </button>
+
+                <button
+                  type="button"
                   disabled={!canCheckout || checkingOut}
                   onClick={handleCheckout}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-medium tracking-wide text-cashmere uppercase transition-colors hover:bg-forest-light disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-medium tracking-wide text-cashmere uppercase transition-colors hover:bg-forest-light disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <CreditCard className="h-4 w-4" />
                   {checkingOut ? "Redirecting…" : "Pay 50% Deposit with Card"}

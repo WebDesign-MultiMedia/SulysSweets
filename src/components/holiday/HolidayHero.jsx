@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Sparkles, PartyPopper } from "lucide-react";
 import { HOLIDAY_BANNER } from "../../data/holidayMenu";
 
 export default function HolidayHero() {
@@ -16,12 +15,11 @@ export default function HolidayHero() {
           </p>
           <h1 className="mt-4 font-display text-5xl leading-tight text-cashmere sm:text-6xl">
             Christmas<span className="text-gold-light">/</span>New Years
-            <PartyPopper className="ml-2 inline-block h-8 w-8 -translate-y-1 text-gold-light sm:h-10 sm:w-10" />
             <br />
             <span className="font-holiday-script text-6xl text-gold-light sm:-7xl">Menu</span>
           </h1>
 
-          <ul className="mt-6 flex flex-col gap-1.5 text-sm text-cashmere/80">
+          <ul className="mt-6 flex flex-col gap-1.5 text-lg text-gold-light">
             {HOLIDAY_BANNER.notes.map((note) => (
               <li key={note}>{note}</li>
             ))}
@@ -54,23 +52,6 @@ export default function HolidayHero() {
             src="logo.png"
             alt="Holiday cake by Suly's Sweets"
             className="relative h-full w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)]"
-          />
-
-          {/* Twinkling sparkles orbiting the logo — same twinkle keyframe as the garland lights. */}
-          <Sparkles
-            className="absolute top-2 right-6 h-6 w-6 text-gold-light"
-            aria-hidden="true"
-            style={{ animation: "holiday-twinkle 2.6s ease-in-out infinite" }}
-          />
-          <Sparkles
-            className="absolute bottom-8 left-2 h-5 w-5 text-gold-light"
-            aria-hidden="true"
-            style={{ animation: "holiday-twinkle 3.2s ease-in-out infinite", animationDelay: "0.6s" }}
-          />
-          <Sparkles
-            className="absolute top-1/3 -left-2 h-4 w-4 text-cashmere/80"
-            aria-hidden="true"
-            style={{ animation: "holiday-twinkle 2.2s ease-in-out infinite", animationDelay: "1.1s" }}
           />
         </motion.div>
       </div>
