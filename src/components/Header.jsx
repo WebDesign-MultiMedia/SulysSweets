@@ -1,14 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Home as HomeIcon, Info, Image as ImageIcon, UtensilsCrossed, Mail } from "lucide-react";
 import { InstagramIcon } from "./icons";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
+
+// Ivory is the site's own warm cream tone (body/section backgrounds) —
+// every tile shares it instead of the original "Multibox" rainbow, so the
+// nav reads as part of this site.
+const TILE_COLORS = ["bg-ivory"];
+
+// Icon per tile instead of a text label — keyed by the link's hash id.
+const TILE_ICONS = {
+  home: HomeIcon,
+  about: Info,
+  gallery: ImageIcon,
+  menu: UtensilsCrossed,
+  contact: Mail,
+};
 
 export default function Header({ activePage, onNavigate }) {
   const { t } = useLanguage();
   const navLinks = [
     { href: "#home", label: t.header.nav.home },
     { href: "#about", label: t.header.nav.about },
+    { href: "#gallery", label: t.header.nav.gallery },
     { href: "#menu", label: t.header.nav.menu },
     { href: "#contact", label: t.header.nav.contact },
   ];
@@ -37,16 +53,11 @@ export default function Header({ activePage, onNavigate }) {
     const onKeyDown = (e) => {
       if (e.key === "Escape") setOpen(false);
     };
-    const onPointerDown = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) setOpen(false);
-    };
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("pointerdown", onPointerDown);
 
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("pointerdown", onPointerDown);
     };
   }, [open]);
 
@@ -132,117 +143,87 @@ export default function Header({ activePage, onNavigate }) {
           would otherwise become a containing block for these fixed elements,
           breaking their viewport-relative positioning. */}
 
-      {/* Dimmed backdrop behind the mobile nav panel — click to close. */}
-      <div
-        aria-hidden="true"
-        onClick={() => setOpen(false)}
-        className={`fixed inset-0 z-40 bg-plum/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      />
-
-      {/* Floating capsule that morphs from a compact "Menu" pill into a
-          small dropdown card, instead of pushing header content. */}
-      <div
-        className={`fixed z-50 md:hidden transition-all duration-500 ease-out ${
+      {/* Hamburger / close toggle — stays on top of the grid overlay below. */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={t.header.toggleMenuAria}
+        aria-expanded={open}
+        className={`fixed z-[60] flex h-11 w-11 items-center justify-center rounded-full border border-plum/10 shadow-lg transition-all duration-500 ease-out md:hidden ${
           mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
-        } ${open ? "top-5 right-5" : scrolled ? "top-4 right-5" : "top-6 right-5"}`}
-        style={{
-          width: open ? "16rem" : "7.5rem",
-          height: open ? "22rem" : "3.25rem",
-        }}
+        } ${open ? "top-5 right-5 bg-cream" : scrolled ? "top-4 right-5 bg-cream" : "top-6 right-5 bg-cream/90"}`}
       >
-        <div
-          ref={panelRef}
-          className={`relative h-full w-full overflow-hidden border border-plum/10 shadow-lg transition-all duration-500 ease-out ${
-            open ? "rounded-3xl bg-cream shadow-2xl" : "rounded-full bg-cream"
+        <span className="flex h-4 w-4 flex-shrink-0 flex-col items-center justify-center gap-1">
+          <span
+            className={`h-px w-4 bg-plum transition-transform duration-300 ${
+              open ? "translate-y-[3.5px] rotate-45" : ""
+            }`}
+          />
+          <span className={`h-px w-4 bg-plum transition-opacity duration-300 ${open ? "opacity-0" : ""}`} />
+          <span
+            className={`h-px w-4 bg-plum transition-transform duration-300 ${
+              open ? "-translate-y-[3.5px] -rotate-45" : ""
+            }`}
+          />
+        </span>
+      </button>
+
+      {/* Full-screen grid navigation — one solid-color tile per link,
+          staggered scale/fade reveal, mobile only. */}
+      <div
+        ref={panelRef}
+        className={`fixed inset-0 z-50 grid grid-cols-2 auto-rows-fr md:hidden ${
+          open ? "" : "pointer-events-none"
+        }`}
+      >
+        {navLinks.map((link, i) => {
+          const Icon = TILE_ICONS[link.href.slice(1)];
+          return (
+            <a
+              key={link.href}
+              href={link.href}
+              aria-label={link.label}
+              onClick={(e) => {
+                setOpen(false);
+                onNavigate(link.href.slice(1), e);
+              }}
+              style={{ transitionDelay: open ? `${i * 60}ms` : "0ms" }}
+              className={`flex items-center justify-center border border-plum/10 p-6 text-plum transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                TILE_COLORS[i % TILE_COLORS.length]
+              } ${open ? "scale-100 opacity-100" : "scale-75 opacity-0"} ${
+                activePage === link.href.slice(1) ? "ring-4 ring-inset ring-plum/60" : ""
+              }`}
+            >
+              <Icon className="h-9 w-9" strokeWidth={1.75} />
+            </a>
+          );
+        })}
+
+        <Link
+          to="/holiday-order"
+          onClick={() => setOpen(false)}
+          style={{ transitionDelay: open ? `${navLinks.length * 60}ms` : "0ms" }}
+          className={`flex flex-col items-center justify-center gap-0.5 border border-cream/10 bg-forest p-6 text-center text-cashmere transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            open ? "scale-100 opacity-100" : "scale-75 opacity-0"
           }`}
         >
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={t.header.toggleMenuAria}
-            aria-expanded={open}
-            className="flex w-full items-center gap-2.5 px-4 py-3.5 transition-transform duration-150 active:scale-95"
-          >
-            <span className="flex h-4 w-4 flex-shrink-0 flex-col items-center justify-center gap-1">
-              <span
-                className={`h-px w-4 bg-plum transition-transform duration-300 ${
-                  open ? "translate-y-[3.5px] rotate-45" : ""
-                }`}
-              />
-              <span className={`h-px w-4 bg-plum transition-opacity duration-300 ${open ? "opacity-0" : ""}`} />
-              <span
-                className={`h-px w-4 bg-plum transition-transform duration-300 ${
-                  open ? "-translate-y-[3.5px] -rotate-45" : ""
-                }`}
-              />
-            </span>
-            <span
-              className={`overflow-hidden whitespace-nowrap font-script text-xl leading-none text-plum transition-all duration-300 ${
-                open ? "max-w-0 opacity-0" : "max-w-[4rem] opacity-100"
-              }`}
-            >
-              {t.header.mobileMenuLabel}
-            </span>
-          </button>
+          <span className="font-script text-3xl leading-tight">Holiday Menu</span>
+          <span className="text-xs tracking-wide text-cashmere/70">Place Your Order</span>
+        </Link>
 
-          <div
-            className={`flex flex-col items-center px-6 pb-8 text-center transition-opacity duration-300 ${open ? "opacity-100 delay-150" : "opacity-0"}`}
-          >
-            <p className="mb-1 font-script text-xl text-plum/50">{t.header.mobileMenuLabel}</p>
-            <ul className="flex flex-col items-center">
-              {navLinks.map((link, i) => (
-                <li
-                  key={link.href}
-                  style={{ transitionDelay: open ? `${150 + i * 70}ms` : "0ms" }}
-                  className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                    open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-                  }`}
-                >
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      setOpen(false);
-                      onNavigate(link.href.slice(1), e);
-                    }}
-                    className={`block py-1.5 font-script text-3xl leading-tight transition-all duration-150 hover:text-terracotta active:scale-95 ${
-                      activePage === link.href.slice(1) ? "text-terracotta" : "text-plum"
-                    }`}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              to="/holiday-order"
-              onClick={() => setOpen(false)}
-              style={{ transitionDelay: open ? `${150 + navLinks.length * 70}ms` : "0ms" }}
-              className={`mt-4 flex flex-col items-center rounded-full bg-forest px-5 py-2 leading-tight text-cashmere transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-              }`}
-            >
-              <span className="text-sm tracking-wide">Holiday Menu</span>
-              <span className="text-[10px] tracking-wide text-cashmere/70">Place Your Order</span>
-            </Link>
-
-            <a
-              href="https://www.instagram.com/sulys_sweets"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              style={{ transitionDelay: open ? `${150 + (navLinks.length + 1) * 70}ms` : "0ms" }}
-              className={`mt-6 flex items-center gap-2 text-sm tracking-wide text-plum/70 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:text-terracotta ${
-                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-              }`}
-            >
-              <InstagramIcon className="h-5 w-5" />
-              @sulys_sweets
-            </a>
-          </div>
-        </div>
+        <a
+          href="https://www.instagram.com/sulys_sweets"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          style={{ transitionDelay: open ? `${(navLinks.length + 1) * 60}ms` : "0ms" }}
+          className={`col-span-2 flex items-center justify-center gap-2 border border-cream/10 bg-plum p-6 text-center text-cream transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            open ? "scale-100 opacity-100" : "scale-75 opacity-0"
+          }`}
+        >
+          <InstagramIcon className="h-5 w-5" />
+          @sulys_sweets
+        </a>
       </div>
     </>
   );

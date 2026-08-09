@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import About from "../components/About";
+import GallerySection from "../components/GallerySection";
 import MenuSection from "../components/MenuSection";
 import InstagramSection from "../components/InstagramSection";
 import ContactSection from "../components/ContactSection";
@@ -13,12 +14,21 @@ const MOBILE_BREAKPOINT = 768;
 export default function Home() {
   const [mobilePage, setMobilePage] = useState("home");
 
-  // Runs after the new page's content has actually mounted, so the browser's
-  // scroll-anchoring can't tug the position away from the top afterward.
+  // Force back to the top whenever the visible mobile "page" changes. The
+  // double rAF waits for the browser to actually commit the new section's
+  // layout before scrolling (see index.css for the matching overflow-anchor
+  // fix — without it, scroll anchoring quietly tugs this back down again).
+  // The trailing timeout re-asserts it once more shortly after, in case a
+  // slower-loading image or font swap shifts layout after the rAFs fire.
   useEffect(() => {
-    if (window.innerWidth < MOBILE_BREAKPOINT) {
-      window.scrollTo({ top: 0, behavior: "auto" });
-    }
+    if (window.innerWidth >= MOBILE_BREAKPOINT) return;
+    const toTop = () => window.scrollTo({ top: 0, behavior: "auto" });
+    const rafId = requestAnimationFrame(() => requestAnimationFrame(toTop));
+    const timeoutId = setTimeout(toTop, 150);
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timeoutId);
+    };
   }, [mobilePage]);
 
   const handleNavigate = (id, e) => {
@@ -40,6 +50,9 @@ export default function Home() {
         </div>
         <div className={pageClass("about")}>
           <About />
+        </div>
+        <div className={pageClass("gallery")}>
+          <GallerySection />
         </div>
         <div className={pageClass("menu")}>
           <MenuSection />

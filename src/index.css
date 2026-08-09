@@ -42,6 +42,12 @@ body {
   color: var(--color-plum);
   font-family: var(--font-body);
   overflow-x: hidden;
+  /* Without this, the browser's scroll anchoring can quietly nudge the page
+     away from a JS-driven `scrollTo({ top: 0 })` right after — e.g. once a
+     newly-shown section's images/reveal animations settle — which is what
+     was leaving the mobile single-page nav stuck mid-scroll after tapping a
+     link instead of landing at the top of the new section. */
+  overflow-anchor: none;
 }
 
 h1, h2, h3, h4 {

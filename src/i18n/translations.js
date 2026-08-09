@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     header: {
-      nav: { home: "Home", about: "About", menu: "Menu", contact: "Contact" },
+      nav: { home: "Home", about: "About", gallery: "Gallery", menu: "Menu", contact: "Contact" },
       mobileMenuLabel: "Menu",
       toggleMenuAria: "Toggle menu",
     },
@@ -25,6 +25,11 @@ export const translations = {
       eyebrow: "Follow Along",
       title: "See our latest cakes on Instagram",
       paragraph: "New designs, behind-the-scenes baking, and daily inspiration — all on our feed.",
+    },
+    gallery: {
+      eyebrow: "Our Work",
+      title: "A Look at Our Creations",
+      paragraph: "A few favorites from past orders — every piece baked, filled, and decorated by hand.",
     },
     menu: {
       eyebrow: "Our Menu",
@@ -106,7 +111,7 @@ export const translations = {
   },
   es: {
     header: {
-      nav: { home: "Inicio", about: "Nosotros", menu: "Menú", contact: "Contacto" },
+      nav: { home: "Inicio", about: "Nosotros", gallery: "Galería", menu: "Menú", contact: "Contacto" },
       mobileMenuLabel: "Menú",
       toggleMenuAria: "Alternar menú",
     },
@@ -130,6 +135,11 @@ export const translations = {
       eyebrow: "Síguenos",
       title: "Mira nuestros pasteles más recientes en Instagram",
       paragraph: "Nuevos diseños, el detrás de cámaras de la repostería, e inspiración diaria — todo en nuestro feed.",
+    },
+    gallery: {
+      eyebrow: "Nuestro Trabajo",
+      title: "Un Vistazo a Nuestras Creaciones",
+      paragraph: "Algunos favoritos de pedidos anteriores — cada pieza horneada, rellena y decorada a mano.",
     },
     menu: {
       eyebrow: "Nuestro Menú",

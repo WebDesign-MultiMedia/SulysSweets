@@ -9,6 +9,7 @@ export default function Footer({ onNavigate }) {
   const navLinks = [
     { href: "#home", label: t.header.nav.home },
     { href: "#about", label: t.header.nav.about },
+    { href: "#gallery", label: t.header.nav.gallery },
     { href: "#menu", label: t.header.nav.menu },
     { href: "#contact", label: t.header.nav.contact },
   ];
