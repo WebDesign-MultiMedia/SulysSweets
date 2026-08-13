@@ -14,26 +14,25 @@ const MOBILE_BREAKPOINT = 768;
 export default function Home() {
   const [mobilePage, setMobilePage] = useState("home");
 
-  // Force back to the top whenever the visible mobile "page" changes. The
-  // double rAF waits for the browser to actually commit the new section's
-  // layout before scrolling (see index.css for the matching overflow-anchor
-  // fix — without it, scroll anchoring quietly tugs this back down again).
-  // The trailing timeout re-asserts it once more shortly after, in case a
-  // slower-loading image or font swap shifts layout after the rAFs fire.
+  // Backup in case mobilePage is ever set from somewhere other than
+  // handleNavigate below. `behavior: "instant"` is required here — "auto"
+  // does *not* mean instant, it defers to the element's CSS scroll-behavior,
+  // which is globally "smooth" on this site (see index.css). An "auto"
+  // scroll was silently turning this into an animated scroll that could get
+  // interrupted or cut short, landing the page mid-scroll instead of at 0.
   useEffect(() => {
-    if (window.innerWidth >= MOBILE_BREAKPOINT) return;
-    const toTop = () => window.scrollTo({ top: 0, behavior: "auto" });
-    const rafId = requestAnimationFrame(() => requestAnimationFrame(toTop));
-    const timeoutId = setTimeout(toTop, 150);
-    return () => {
-      cancelAnimationFrame(rafId);
-      clearTimeout(timeoutId);
-    };
+    if (window.innerWidth < MOBILE_BREAKPOINT) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
   }, [mobilePage]);
 
   const handleNavigate = (id, e) => {
     if (window.innerWidth < MOBILE_BREAKPOINT) {
       e.preventDefault();
+      // Instant scroll, before swapping sections, while the old section is
+      // still on screen — see the effect above for why "instant" and not
+      // "auto" matters here.
+      window.scrollTo({ top: 0, behavior: "instant" });
       setMobilePage(id);
     }
   };

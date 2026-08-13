@@ -239,13 +239,13 @@ export default function CartDrawer() {
                         value={scheduledDate}
                         min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setScheduledDate(e.target.value)}
-                        className={`${inputClass} min-w-0`}
+                        className={`${inputClass} min-w-0 max-w-full appearance-none`}
                       />
                       <input
                         type="time"
                         value={scheduledTime}
                         onChange={(e) => setScheduledTime(e.target.value)}
-                        className={`${inputClass} min-w-0`}
+                        className={`${inputClass} min-w-0 max-w-full appearance-none`}
                       />
                     </div>
                   </div>

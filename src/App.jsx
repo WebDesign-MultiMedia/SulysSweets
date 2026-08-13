@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 
 const Home = lazy(() => import("./pages/Home"));
 const HolidayOrder = lazy(() => import("./pages/HolidayOrder"));
@@ -8,6 +9,7 @@ const HolidayOrderSuccess = lazy(() => import("./pages/HolidayOrderSuccess"));
 export default function App() {
   return (
     <Suspense fallback={null}>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/holiday-order" element={<HolidayOrder />} />

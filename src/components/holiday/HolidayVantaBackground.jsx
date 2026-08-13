@@ -12,38 +12,6 @@ const TOPOLOGY_OPTIONS = {
 
 const BACKDROP_COLOR = "#1e3a2b";
 
-const MOBILE_QUERY = "(max-width: 1023px)";
-
-function useMatchMedia(query) {
-  const [matches, setMatches] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(query).matches,
-  );
-
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    const onChange = (e) => setMatches(e.matches);
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, [query]);
-
-  return matches;
-}
-
-// Skip Vanta on devices unlikely to handle a CPU-bound p5.js canvas smoothly:
-// few cores, low RAM, or the user has opted into data saver. `deviceMemory`
-// isn't exposed by every browser (notably Safari) — treat "unknown" as fine
-// rather than penalizing it.
-function isCapableDevice() {
-  if (typeof navigator === "undefined") return true;
-  const cores = navigator.hardwareConcurrency ?? 4;
-  const memory = navigator.deviceMemory;
-  const saveData = navigator.connection?.saveData ?? false;
-  if (saveData) return false;
-  if (cores < 4) return false;
-  if (typeof memory === "number" && memory < 4) return false;
-  return true;
-}
-
 // Defer heavy work until the browser is idle (falls back to a timeout on
 // Safari, which has no requestIdleCallback) so it lands after Time to
 // Interactive instead of competing with initial page load.
@@ -63,10 +31,8 @@ export default function HolidayVantaBackground() {
   const [reducedMotion] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  const [capable] = useState(isCapableDevice);
-  const isMobile = useMatchMedia(MOBILE_QUERY);
   const [vantaReady, setVantaReady] = useState(false);
-  const useVanta = capable && !reducedMotion;
+  const useVanta = !reducedMotion;
 
   // The canvas is painted via fixed-position layers, not the real document
   // background. Keep <html>/<body> in sync so iOS Safari's rubber-band
@@ -121,7 +87,7 @@ export default function HolidayVantaBackground() {
       effectRef.current = null;
       setVantaReady(false);
     };
-  }, [useVanta, isMobile]);
+  }, [useVanta]);
 
   // No negative z-index here: these are `position: fixed`, so in the root
   // stacking context a negative z-index paints *behind the document body's
