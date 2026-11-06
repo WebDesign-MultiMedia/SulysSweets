@@ -7,6 +7,7 @@ import { getDemoOrder, isDemoSessionId } from "../data/demoOrder";
 import Snowfall from "../components/holiday/Snowfall";
 import HolidayVantaBackground from "../components/holiday/HolidayVantaBackground";
 import { useLanguage } from "../i18n/LanguageContext";
+import DemoNotice from "../components/holiday/DemoNotice";
 
 function useOrder(sessionId) {
   const [state, setState] = useState({ loading: true, error: "", order: null });
@@ -157,6 +158,7 @@ export default function HolidayOrderSuccess() {
           </Link>
         </div>
       </header>
+      {order?.isDemo && <DemoNotice />}
 
       <div className="relative mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
         {loading && <p className="text-center text-cashmere/80">Loading your order…</p>}

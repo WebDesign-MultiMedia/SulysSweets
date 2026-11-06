@@ -7,6 +7,7 @@ import { useHolidayCart } from "../../context/HolidayCartContext";
 import { formatUSD } from "../../data/holidayMenu";
 import { createDemoOrder } from "../../data/demoOrder";
 import { useLanguage } from "../../i18n/LanguageContext";
+import DemoNotice from "./DemoNotice";
 
 const inputClass =
   "w-full rounded-xl border border-espresso/20 bg-white/80 px-3.5 py-2.5 text-sm text-espresso placeholder:text-espresso/40 outline-none transition-colors focus:border-forest";
@@ -355,6 +356,7 @@ export default function CartDrawer() {
                   <CreditCard className="h-4 w-4" />
                   {checkingOut ? "Redirecting…" : "Pay 50% Deposit with Card"}
                 </button>
+                <DemoNotice compact />
                 {checkoutError && (
                   <p role="alert" className="mt-2 text-center text-xs font-medium text-crimson">
                     {checkoutError}

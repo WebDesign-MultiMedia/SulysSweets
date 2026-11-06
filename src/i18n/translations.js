@@ -1,5 +1,3 @@
-// Placeholders in [square brackets] in the legal text are intentionally left
-// in English in both languages so a single find-and-replace fills them in.
 const usd = (amount) => Number(amount || 0).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 export const translations = {
@@ -8,6 +6,8 @@ export const translations = {
       nav: { home: "Home", about: "About", gallery: "Gallery", menu: "Menu", contact: "Contact" },
       mobileMenuLabel: "Menu",
       toggleMenuAria: "Toggle menu",
+      holidayMenu: "Holiday Menu",
+      placeOrder: "Place Your Order",
     },
     hero: {
       eyebrow: "Handmade in Pelham Bay, Bronx",
@@ -16,6 +16,9 @@ export const translations = {
       paragraph:
         "Every order is baked, filled, and decorated by hand — small batches, real ingredients, and a design made just for you.",
       cta: "View the Menu",
+      ctaSecondary: "Request a Quote",
+      highlights: ["Handmade to order", "Pick-up in Pelham Bay", "Delivery available"],
+      scroll: "Scroll",
     },
     about: {
       eyebrow: "About Us",
@@ -24,6 +27,11 @@ export const translations = {
         "Suly's Sweets started as a passion for baking and grew into a home bakery serving birthdays, quinceañeras, and every occasion worth celebrating. Every cake, cupcake, and treat is made fresh, by hand, right in Pelham Bay, Bronx.",
       paragraph2:
         "From classic flavors to fully custom designs, we work closely with you to bring your vision to the table.",
+      values: [
+        { title: "Made by hand", text: "Baked, filled, and decorated in small batches." },
+        { title: "Real ingredients", text: "Fresh, simple ingredients in every treat." },
+        { title: "Custom designs", text: "A design made just for your celebration." },
+      ],
     },
     instagram: {
       eyebrow: "Follow Along",
@@ -34,6 +42,7 @@ export const translations = {
       eyebrow: "Our Work",
       title: "A Look at Our Creations",
       paragraph: "A few favorites from past orders — every piece baked, filled, and decorated by hand.",
+      hint: "Tap any photo to enlarge",
     },
     menu: {
       eyebrow: "Our Menu",
@@ -58,6 +67,10 @@ export const translations = {
       title: "Let's Plan Your Order",
       paragraph: "Reach out to talk flavors, design, and pick-up details for your next celebration.",
       emailUs: "Email Us",
+      reachUs: "Reach us directly",
+      emailLabel: "Email",
+      phoneLabel: "Call / Text",
+      leadTime: "Please order 2–3 weeks in advance.",
       orderInfoTitle: "Order Info",
       orderInfo: [
         "50% non-refundable deposit required",
@@ -111,8 +124,18 @@ export const translations = {
     },
     footer: {
       copyright: (year) => `© ${year} Suly's Sweets. All rights reserved.`,
+      tagline: "Handmade cakes & desserts from Pelham Bay, Bronx.",
+      explore: "Explore",
+      contact: "Contact",
+      legal: "Legal",
       privacy: "Privacy Policy",
       terms: "Terms",
+    },
+    demo: {
+      title: "Demo mode:",
+      body: "online checkout is simulated — no card is charged and no order is placed. To order for real, DM us on Instagram",
+      orCall: "or call/text",
+      cart: "Demo mode — checkout is simulated. No card is charged and no order is placed.",
     },
     cart: {
       smsConsent: {
@@ -160,11 +183,11 @@ export const translations = {
     },
     legal: {
       backHome: "Back to Suly's Sweets",
-      effective: "Effective date: [Effective date]",
+      effective: "Effective date: November 5, 2026",
       privacy: {
         title: "Privacy Policy",
         intro:
-          "This Privacy Policy explains how [Business legal name] (\"Suly's Sweets,\" \"we,\" \"us\") collects, uses, and protects your information when you visit this website or place an order.",
+          "This Privacy Policy explains how Suly's Sweets (\"Suly's Sweets,\" \"we,\" \"us\") collects, uses, and protects your information when you visit this website or place an order.",
         sections: [
           {
             heading: "Information we collect",
@@ -202,12 +225,12 @@ export const translations = {
           },
           {
             heading: "How long we keep information",
-            paragraphs: ["We keep order information for [Data retention period], or longer if required by law."],
+            paragraphs: ["We keep order information only as long as needed to complete your order and meet tax and accounting requirements."],
           },
           {
             heading: "Your choices",
             paragraphs: [
-              "You can ask us to access, correct, or delete your personal information by contacting us at [Contact email].",
+              "You can ask us to access, correct, or delete your personal information by contacting us at sulyssweets24@gmail.com.",
             ],
           },
           {
@@ -220,14 +243,14 @@ export const translations = {
           },
           {
             heading: "Contact us",
-            paragraphs: ["[Business legal name] · [Business mailing address] · [Contact email] · [Support phone number]"],
+            paragraphs: ["Suly's Sweets · Bronx, NY · sulyssweets24@gmail.com · 347-859-5181"],
           },
         ],
       },
       terms: {
         title: "Terms of Service",
         intro:
-          "These Terms apply to your use of this website and to orders placed with [Business legal name] (\"Suly's Sweets,\" \"we,\" \"us\"). By placing an order, you agree to these Terms.",
+          "These Terms apply to your use of this website and to orders placed with Suly's Sweets (\"Suly's Sweets,\" \"we,\" \"us\"). By placing an order, you agree to these Terms.",
         sections: [
           {
             heading: "Orders and deposits",
@@ -235,12 +258,13 @@ export const translations = {
               "A 50% non-refundable deposit is required to secure your order.",
               "The remaining balance is due at pickup or delivery.",
               "Delivery is available for a fee that varies by location.",
-              "[Cancellation & refund policy details]",
+              "Please place orders 2–3 weeks in advance.",
+              "Because the deposit is non-refundable, canceling an order forfeits the deposit. To change an order, contact us as early as possible.",
             ],
           },
           {
             heading: "Allergens",
-            paragraphs: ["[Allergen notice]"],
+            paragraphs: ["Our treats are made by hand in a home bakery. Please tell us about any allergies before you order and ask us about ingredients — we can't guarantee that any item is allergen-free."],
           },
           {
             heading: "SMS terms",
@@ -250,7 +274,7 @@ export const translations = {
               "Message frequency varies by order.",
               "Message and data rates may apply.",
               "Reply STOP to opt out at any time. You'll receive one confirmation message, and no further texts after that.",
-              "Reply HELP for help, or contact us at [Support phone number] or [Contact email].",
+              "Reply HELP for help, or contact us at 347-859-5181 or sulyssweets24@gmail.com.",
               "Consent to receive texts is not a condition of purchase.",
               "Carriers are not liable for delayed or undelivered messages.",
               "See our Privacy Policy for how we handle your information.",
@@ -258,11 +282,11 @@ export const translations = {
           },
           {
             heading: "Governing law",
-            paragraphs: ["These Terms are governed by the laws of the State of [State of governing law]."],
+            paragraphs: ["These Terms are governed by the laws of the State of New York."],
           },
           {
             heading: "Contact us",
-            paragraphs: ["[Business legal name] · [Business mailing address] · [Contact email] · [Support phone number]"],
+            paragraphs: ["Suly's Sweets · Bronx, NY · sulyssweets24@gmail.com · 347-859-5181"],
           },
         ],
       },
@@ -273,6 +297,8 @@ export const translations = {
       nav: { home: "Inicio", about: "Nosotros", gallery: "Galería", menu: "Menú", contact: "Contacto" },
       mobileMenuLabel: "Menú",
       toggleMenuAria: "Alternar menú",
+      holidayMenu: "Menú Navideño",
+      placeOrder: "Haz tu Pedido",
     },
     hero: {
       eyebrow: "Hecho a mano en Pelham Bay, Bronx",
@@ -281,6 +307,9 @@ export const translations = {
       paragraph:
         "Cada pedido se hornea, rellena y decora a mano — en pequeños lotes, con ingredientes reales y un diseño hecho solo para ti.",
       cta: "Ver el Menú",
+      ctaSecondary: "Pedir Cotización",
+      highlights: ["Hecho a mano por pedido", "Recogida en Pelham Bay", "Entrega disponible"],
+      scroll: "Desliza",
     },
     about: {
       eyebrow: "Nosotros",
@@ -289,6 +318,11 @@ export const translations = {
         "Suly's Sweets comenzó como una pasión por la repostería y se convirtió en una pastelería casera que atiende cumpleaños, quinceañeras y toda ocasión que valga la pena celebrar. Cada pastel, cupcake y postre se hace fresco, a mano, en Pelham Bay, Bronx.",
       paragraph2:
         "Desde sabores clásicos hasta diseños totalmente personalizados, trabajamos de cerca contigo para hacer realidad tu visión.",
+      values: [
+        { title: "Hecho a mano", text: "Horneado, relleno y decorado en pequeños lotes." },
+        { title: "Ingredientes reales", text: "Ingredientes frescos y sencillos en cada postre." },
+        { title: "Diseños personalizados", text: "Un diseño hecho solo para tu celebración." },
+      ],
     },
     instagram: {
       eyebrow: "Síguenos",
@@ -299,6 +333,7 @@ export const translations = {
       eyebrow: "Nuestro Trabajo",
       title: "Un Vistazo a Nuestras Creaciones",
       paragraph: "Algunos favoritos de pedidos anteriores — cada pieza horneada, rellena y decorada a mano.",
+      hint: "Toca cualquier foto para ampliarla",
     },
     menu: {
       eyebrow: "Nuestro Menú",
@@ -323,6 +358,10 @@ export const translations = {
       title: "Planeemos tu Pedido",
       paragraph: "Contáctanos para hablar sobre sabores, diseño y detalles de recogida para tu próxima celebración.",
       emailUs: "Envíanos un Correo",
+      reachUs: "Contáctanos directamente",
+      emailLabel: "Correo",
+      phoneLabel: "Llamada / Mensaje",
+      leadTime: "Por favor haz tu pedido con 2–3 semanas de anticipación.",
       orderInfoTitle: "Información del Pedido",
       orderInfo: [
         "Depósito no reembolsable del 50% requerido",
@@ -376,8 +415,18 @@ export const translations = {
     },
     footer: {
       copyright: (year) => `© ${year} Suly's Sweets. Todos los derechos reservados.`,
+      tagline: "Pasteles y postres hechos a mano en Pelham Bay, Bronx.",
+      explore: "Explorar",
+      contact: "Contacto",
+      legal: "Legal",
       privacy: "Política de Privacidad",
       terms: "Términos",
+    },
+    demo: {
+      title: "Modo de demostración:",
+      body: "el pago en línea es simulado — no se cobra ninguna tarjeta y no se hace ningún pedido. Para hacer un pedido real, escríbenos por Instagram",
+      orCall: "o llama/envía un mensaje al",
+      cart: "Modo de demostración — el pago es simulado. No se cobra ninguna tarjeta y no se hace ningún pedido.",
     },
     cart: {
       smsConsent: {
@@ -425,11 +474,11 @@ export const translations = {
     },
     legal: {
       backHome: "Volver a Suly's Sweets",
-      effective: "Fecha de entrada en vigor: [Effective date]",
+      effective: "Fecha de entrada en vigor: 5 de noviembre de 2026",
       privacy: {
         title: "Política de Privacidad",
         intro:
-          "Esta Política de Privacidad explica cómo [Business legal name] (\"Suly's Sweets\", \"nosotros\") recopila, usa y protege tu información cuando visitas este sitio web o haces un pedido.",
+          "Esta Política de Privacidad explica cómo Suly's Sweets (\"Suly's Sweets\", \"nosotros\") recopila, usa y protege tu información cuando visitas este sitio web o haces un pedido.",
         sections: [
           {
             heading: "Información que recopilamos",
@@ -467,12 +516,12 @@ export const translations = {
           },
           {
             heading: "Cuánto tiempo guardamos la información",
-            paragraphs: ["Guardamos la información de los pedidos durante [Data retention period], o más tiempo si la ley lo exige."],
+            paragraphs: ["Guardamos la información de los pedidos solo el tiempo necesario para completar tu pedido y cumplir con los requisitos fiscales y contables."],
           },
           {
             heading: "Tus opciones",
             paragraphs: [
-              "Puedes pedirnos acceder, corregir o eliminar tu información personal escribiéndonos a [Contact email].",
+              "Puedes pedirnos acceder, corregir o eliminar tu información personal escribiéndonos a sulyssweets24@gmail.com.",
             ],
           },
           {
@@ -485,14 +534,14 @@ export const translations = {
           },
           {
             heading: "Contáctanos",
-            paragraphs: ["[Business legal name] · [Business mailing address] · [Contact email] · [Support phone number]"],
+            paragraphs: ["Suly's Sweets · Bronx, NY · sulyssweets24@gmail.com · 347-859-5181"],
           },
         ],
       },
       terms: {
         title: "Términos de Servicio",
         intro:
-          "Estos Términos se aplican al uso de este sitio web y a los pedidos hechos con [Business legal name] (\"Suly's Sweets\", \"nosotros\"). Al hacer un pedido, aceptas estos Términos.",
+          "Estos Términos se aplican al uso de este sitio web y a los pedidos hechos con Suly's Sweets (\"Suly's Sweets\", \"nosotros\"). Al hacer un pedido, aceptas estos Términos.",
         sections: [
           {
             heading: "Pedidos y depósitos",
@@ -500,12 +549,13 @@ export const translations = {
               "Se requiere un depósito no reembolsable del 50% para asegurar tu pedido.",
               "El saldo restante se paga al recoger o al recibir la entrega.",
               "La entrega está disponible con un costo que varía según la ubicación.",
-              "[Cancellation & refund policy details]",
+              "Por favor haz tu pedido con 2–3 semanas de anticipación.",
+              "Como el depósito no es reembolsable, cancelar un pedido implica perder el depósito. Para cambiar un pedido, contáctanos lo antes posible.",
             ],
           },
           {
             heading: "Alérgenos",
-            paragraphs: ["[Allergen notice]"],
+            paragraphs: ["Nuestros postres se hacen a mano en una pastelería casera. Avísanos de cualquier alergia antes de hacer tu pedido y pregúntanos por los ingredientes — no podemos garantizar que ningún producto esté libre de alérgenos."],
           },
           {
             heading: "Términos de SMS",
@@ -515,7 +565,7 @@ export const translations = {
               "La frecuencia de los mensajes varía según el pedido.",
               "Pueden aplicarse tarifas de mensajes y datos.",
               "Responde STOP para cancelar en cualquier momento. Recibirás un mensaje de confirmación y ningún mensaje más después de eso.",
-              "Responde HELP para obtener ayuda, o contáctanos al [Support phone number] o a [Contact email].",
+              "Responde HELP para obtener ayuda, o contáctanos al 347-859-5181 o a sulyssweets24@gmail.com.",
               "El consentimiento para recibir mensajes de texto no es una condición de compra.",
               "Los operadores no son responsables de mensajes retrasados o no entregados.",
               "Consulta nuestra Política de Privacidad para saber cómo manejamos tu información.",
@@ -523,11 +573,11 @@ export const translations = {
           },
           {
             heading: "Ley aplicable",
-            paragraphs: ["Estos Términos se rigen por las leyes del Estado de [State of governing law]."],
+            paragraphs: ["Estos Términos se rigen por las leyes del Estado de New York."],
           },
           {
             heading: "Contáctanos",
-            paragraphs: ["[Business legal name] · [Business mailing address] · [Contact email] · [Support phone number]"],
+            paragraphs: ["Suly's Sweets · Bronx, NY · sulyssweets24@gmail.com · 347-859-5181"],
           },
         ],
       },

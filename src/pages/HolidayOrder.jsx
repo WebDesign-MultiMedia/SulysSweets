@@ -9,6 +9,7 @@ import Snowfall from "../components/holiday/Snowfall";
 import Garland from "../components/holiday/Garland";
 import HolidayVantaBackground from "../components/holiday/HolidayVantaBackground";
 import HolidayFooter from "../components/holiday/HolidayFooter";
+import DemoNotice from "../components/holiday/DemoNotice";
 import { HOLIDAY_PRODUCTS } from "../data/holidayMenu";
 
 function HolidayOrderContent() {
@@ -20,6 +21,7 @@ function HolidayOrderContent() {
       <Snowfall />
 
       <HolidayNav />
+      <DemoNotice />
       <HolidayHero />
 
       <div id="menu" className="relative mx-auto max-w-6xl px-5 pb-16 sm:px-8">
