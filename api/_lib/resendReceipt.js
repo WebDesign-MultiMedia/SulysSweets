@@ -1,5 +1,5 @@
 import { NotConfiguredError, isValidSessionId, reconstructOrder, retrieveSession } from "./stripeOrder.js";
-import { canText, sendEmailReceipt, sendSmsReceipt } from "./sendReceipts.js";
+import { sendEmailReceipt } from "./sendReceipts.js";
 import {
   MAX_SENDS_PER_CHANNEL,
   RESEND_COOLDOWN_MS,
@@ -7,7 +7,7 @@ import {
   sendWithReservation,
 } from "./receiptState.js";
 
-// Shared handler behind /api/send-email and /api/send-sms. Responses carry
+// Handler behind /api/send-email (customer-triggered receipt resend). Responses carry
 // a short `error` code that the success page translates; details are only
 // logged server-side.
 export async function handleResend(req, res, channel) {
@@ -38,10 +38,6 @@ export async function handleResend(req, res, channel) {
   }
 
   const order = reconstructOrder(session);
-  if (channel === "sms" && !canText(order)) {
-    return res.status(403).json({ error: "no_consent" });
-  }
-
   const state = getReceiptState(session, channel);
   if (state.count >= MAX_SENDS_PER_CHANNEL) {
     return res.status(429).json({ error: "limit_reached" });
@@ -58,10 +54,7 @@ export async function handleResend(req, res, channel) {
   }
 
   try {
-    const origin = req.headers.origin || `https://${req.headers.host}`;
-    const { count } = await sendWithReservation(session, channel, () =>
-      channel === "email" ? sendEmailReceipt(order) : sendSmsReceipt(order, origin),
-    );
+    const { count } = await sendWithReservation(session, channel, () => sendEmailReceipt(order));
     return res.status(200).json({ sent: true, remaining: Math.max(0, MAX_SENDS_PER_CHANNEL - count) });
   } catch (err) {
     console.error(`Resend ${channel} failed for ${sessionId}:`, err);

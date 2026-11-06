@@ -1,5 +1,3 @@
-const usd = (amount) => Number(amount || 0).toLocaleString("en-US", { style: "currency", currency: "USD" });
-
 export const translations = {
   en: {
     header: {
@@ -138,14 +136,6 @@ export const translations = {
       cart: "Demo mode — checkout is simulated. No card is charged and no order is placed.",
     },
     cart: {
-      smsConsent: {
-        before: "Text me order updates and receipts for this order. Msg & data rates may apply. Msg frequency varies. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our ",
-        privacy: "Privacy Policy",
-        and: " and ",
-        terms: "Terms",
-        after: ".",
-        optional: "(optional)",
-      },
       errors: {
         cart_empty: "Your cart is empty.",
         missing_contact: "Please fill in your name, email, and phone.",
@@ -158,17 +148,14 @@ export const translations = {
     },
     success: {
       receiptSentEmail: "Receipt sent to your email.",
-      receiptSentBoth: "Receipt sent to your email and phone.",
       receiptPending: "Your receipt is on its way — it should arrive by email shortly.",
       demoNote: "This is a demo — the buttons below preview sending a receipt (nothing is actually sent).",
       resendEmail: "Resend email",
-      resendText: "Resend text",
       sending: "Sending…",
       sent: "Sent!",
       tryAgain: "Try again",
       errors: {
         not_paid: "This order hasn't been paid yet, so we can't send a receipt.",
-        no_consent: "Text receipts weren't requested for this order.",
         limit_reached: "You've reached the resend limit for this order. Please contact us if you still need a copy.",
         cooldown: (seconds) => `Please wait ${seconds} seconds before sending again.`,
         not_found: "We couldn't find this order.",
@@ -230,7 +217,7 @@ export const translations = {
         contactInfo: "Contact Info",
         fullName: "Full name",
         email: "Email",
-        phone: "Phone",
+        phone: "Phone (for questions about your order)",
         total: "Total Order Amount",
         depositNow: "50% Deposit Due Now",
         balance: "Remaining Balance Due at Pickup",
@@ -268,15 +255,9 @@ export const translations = {
         happyHolidays: "Happy Holidays from Suly's Sweets ♡",
       },
     },
-    sms: {
-      receipt: ({ orderId, depositPaid, remainingBalance, fulfillment, scheduled, link }) =>
-        `Suly's Sweets — Order ${orderId} confirmed! Deposit paid: ${usd(depositPaid)}. Balance due at pickup: ${usd(remainingBalance)}.` +
-        (scheduled ? ` ${fulfillment === "delivery" ? "Delivery" : "Pickup"}: ${scheduled}.` : "") +
-        ` Details: ${link} Reply STOP to opt out, HELP for help.`,
-    },
     legal: {
       backHome: "Back to Suly's Sweets",
-      effective: "Effective date: November 5, 2026",
+      effective: "Effective date: November 6, 2026",
       privacy: {
         title: "Privacy Policy",
         intro:
@@ -297,23 +278,15 @@ export const translations = {
             list: [
               "To take, prepare, and deliver your order.",
               "To send your order receipt and order updates by email.",
-              "To send order updates and receipts by text message, only if you opt in at checkout.",
+              "To call you about your order if we have a question. We use your phone number only to contact you about your order.",
               "To answer your questions and provide customer support.",
             ],
           },
           {
             heading: "Service providers",
             paragraphs: [
-              "We share information only with service providers that help us run the business: Stripe (payments), Resend (email delivery), Twilio (text message delivery), and Vercel (website hosting). They may use your information only to provide their services to us.",
+              "We share information only with service providers that help us run the business: Stripe (payments), Resend (email delivery), and Vercel (website hosting). They may use your information only to provide their services to us.",
               "We do not sell your personal information.",
-            ],
-          },
-          {
-            heading: "Text messaging (SMS)",
-            paragraphs: [
-              "If you opt in, we use your mobile number only to send messages about your order, such as receipts and order updates.",
-              "No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. Information sharing to subcontractors in support services, such as customer service, is permitted. All other use case categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.",
-              "You can opt out at any time by replying STOP. Reply HELP for help. See our Terms for full SMS terms.",
             ],
           },
           {
@@ -358,20 +331,6 @@ export const translations = {
           {
             heading: "Allergens",
             paragraphs: ["Our treats are made by hand in a home bakery. Please tell us about any allergies before you order and ask us about ingredients — we can't guarantee that any item is allergen-free."],
-          },
-          {
-            heading: "SMS terms",
-            list: [
-              "Program name: Suly's Sweets Order Updates.",
-              "What you'll receive: receipts and updates about orders you place with us. We do not send marketing texts.",
-              "Message frequency varies by order.",
-              "Message and data rates may apply.",
-              "Reply STOP to opt out at any time. You'll receive one confirmation message, and no further texts after that.",
-              "Reply HELP for help, or contact us at 347-859-5181 or sulyssweets24@gmail.com.",
-              "Consent to receive texts is not a condition of purchase.",
-              "Carriers are not liable for delayed or undelivered messages.",
-              "See our Privacy Policy for how we handle your information.",
-            ],
           },
           {
             heading: "Governing law",
@@ -522,14 +481,6 @@ export const translations = {
       cart: "Modo de demostración — el pago es simulado. No se cobra ninguna tarjeta y no se hace ningún pedido.",
     },
     cart: {
-      smsConsent: {
-        before: "Envíenme actualizaciones y recibos de este pedido por mensaje de texto. Pueden aplicarse tarifas de mensajes y datos. La frecuencia de los mensajes varía. Responde STOP para cancelar, HELP para ayuda. El consentimiento no es una condición de compra. Consulta nuestra ",
-        privacy: "Política de Privacidad",
-        and: " y nuestros ",
-        terms: "Términos",
-        after: ".",
-        optional: "(opcional)",
-      },
       errors: {
         cart_empty: "Tu carrito está vacío.",
         missing_contact: "Por favor completa tu nombre, correo y teléfono.",
@@ -542,17 +493,14 @@ export const translations = {
     },
     success: {
       receiptSentEmail: "Recibo enviado a tu correo.",
-      receiptSentBoth: "Recibo enviado a tu correo y teléfono.",
       receiptPending: "Tu recibo está en camino — debería llegar a tu correo en breve.",
       demoNote: "Esto es una demostración — los botones de abajo simulan el envío de un recibo (no se envía nada).",
       resendEmail: "Reenviar correo",
-      resendText: "Reenviar SMS",
       sending: "Enviando…",
       sent: "¡Enviado!",
       tryAgain: "Intentar de nuevo",
       errors: {
         not_paid: "Este pedido aún no ha sido pagado, así que no podemos enviar un recibo.",
-        no_consent: "No se solicitaron recibos por mensaje de texto para este pedido.",
         limit_reached: "Alcanzaste el límite de reenvíos para este pedido. Contáctanos si aún necesitas una copia.",
         cooldown: (seconds) => `Espera ${seconds} segundos antes de enviar de nuevo.`,
         not_found: "No pudimos encontrar este pedido.",
@@ -635,7 +583,7 @@ export const translations = {
         contactInfo: "Información de contacto",
         fullName: "Nombre completo",
         email: "Correo electrónico",
-        phone: "Teléfono",
+        phone: "Teléfono (para preguntas sobre su pedido)",
         total: "Total del pedido",
         depositNow: "Depósito del 50% a pagar ahora",
         balance: "Saldo restante a pagar al recoger",
@@ -673,15 +621,9 @@ export const translations = {
         happyHolidays: "Felices Fiestas de parte de Suly's Sweets ♡",
       },
     },
-    sms: {
-      receipt: ({ orderId, depositPaid, remainingBalance, fulfillment, scheduled, link }) =>
-        `Suly's Sweets — ¡Pedido ${orderId} confirmado! Depósito pagado: ${usd(depositPaid)}. Saldo a pagar al recoger: ${usd(remainingBalance)}.` +
-        (scheduled ? ` ${fulfillment === "delivery" ? "Entrega" : "Recogida"}: ${scheduled}.` : "") +
-        ` Detalles: ${link} Responde STOP para cancelar, HELP para ayuda.`,
-    },
     legal: {
       backHome: "Volver a Suly's Sweets",
-      effective: "Fecha de entrada en vigor: 5 de noviembre de 2026",
+      effective: "Fecha de entrada en vigor: 6 de noviembre de 2026",
       privacy: {
         title: "Política de Privacidad",
         intro:
@@ -702,23 +644,15 @@ export const translations = {
             list: [
               "Para recibir, preparar y entregar tu pedido.",
               "Para enviarte el recibo y las actualizaciones de tu pedido por correo electrónico.",
-              "Para enviarte actualizaciones y recibos por mensaje de texto, solo si das tu consentimiento al pagar.",
+              "Para llamarte si tenemos alguna pregunta sobre tu pedido. Usamos tu número de teléfono solo para contactarte sobre tu pedido.",
               "Para responder tus preguntas y brindarte atención al cliente.",
             ],
           },
           {
             heading: "Proveedores de servicios",
             paragraphs: [
-              "Solo compartimos información con proveedores de servicios que nos ayudan a operar el negocio: Stripe (pagos), Resend (envío de correos), Twilio (envío de mensajes de texto) y Vercel (hosting del sitio web). Solo pueden usar tu información para prestarnos sus servicios.",
+              "Solo compartimos información con proveedores de servicios que nos ayudan a operar el negocio: Stripe (pagos), Resend (envío de correos) y Vercel (hosting del sitio web). Solo pueden usar tu información para prestarnos sus servicios.",
               "No vendemos tu información personal.",
-            ],
-          },
-          {
-            heading: "Mensajes de texto (SMS)",
-            paragraphs: [
-              "Si das tu consentimiento, usamos tu número móvil solo para enviarte mensajes sobre tu pedido, como recibos y actualizaciones.",
-              "No compartiremos información móvil con terceros ni afiliados para fines de marketing o promoción. Se permite compartir información con subcontratistas de servicios de apoyo, como atención al cliente. Todas las demás categorías excluyen los datos de consentimiento (opt-in) de mensajes de texto; esta información no se compartirá con ningún tercero.",
-              "Puedes cancelar en cualquier momento respondiendo STOP. Responde HELP para obtener ayuda. Consulta nuestros Términos para ver los términos completos de SMS.",
             ],
           },
           {
@@ -763,20 +697,6 @@ export const translations = {
           {
             heading: "Alérgenos",
             paragraphs: ["Nuestros postres se hacen a mano en una pastelería casera. Avísanos de cualquier alergia antes de hacer tu pedido y pregúntanos por los ingredientes — no podemos garantizar que ningún producto esté libre de alérgenos."],
-          },
-          {
-            heading: "Términos de SMS",
-            list: [
-              "Nombre del programa: Suly's Sweets Order Updates.",
-              "Qué recibirás: recibos y actualizaciones de los pedidos que hagas con nosotros. No enviamos mensajes de marketing.",
-              "La frecuencia de los mensajes varía según el pedido.",
-              "Pueden aplicarse tarifas de mensajes y datos.",
-              "Responde STOP para cancelar en cualquier momento. Recibirás un mensaje de confirmación y ningún mensaje más después de eso.",
-              "Responde HELP para obtener ayuda, o contáctanos al 347-859-5181 o a sulyssweets24@gmail.com.",
-              "El consentimiento para recibir mensajes de texto no es una condición de compra.",
-              "Los operadores no son responsables de mensajes retrasados o no entregados.",
-              "Consulta nuestra Política de Privacidad para saber cómo manejamos tu información.",
-            ],
           },
           {
             heading: "Ley aplicable",

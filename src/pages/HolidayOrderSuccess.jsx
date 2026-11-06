@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Mail, MessageSquare, Printer } from "lucide-react";
+import { ArrowLeft, Mail, Printer } from "lucide-react";
 import { formatUSD, formatScheduled, localizeItem } from "../data/holidayMenu";
 import { clearStoredCart } from "../context/HolidayCartContext";
 import { getDemoOrder, isDemoSessionId } from "../data/demoOrder";
@@ -58,7 +58,7 @@ function useOrder(sessionId) {
 }
 
 // Error codes after which retrying can't succeed — the button stays disabled.
-const FINAL_ERRORS = new Set(["limit_reached", "not_paid", "no_consent", "not_found"]);
+const FINAL_ERRORS = new Set(["limit_reached", "not_paid", "not_found"]);
 
 function useResend(order, sessionId, endpoint, t) {
   const [status, setStatus] = useState("idle");
@@ -131,18 +131,13 @@ export default function HolidayOrderSuccess() {
   const ts = t.holiday.success;
   const locale = t.holiday.locale;
   const email = useResend(order, sessionId, "/api/send-email", t);
-  const sms = useResend(order, sessionId, "/api/send-sms", t);
 
   const emailSent = Boolean(order?.receipts?.email?.sent);
-  const smsSent = Boolean(order?.receipts?.sms?.sent);
   const receiptLine = order?.isDemo
     ? t.success.demoNote
-    : emailSent && smsSent
-      ? t.success.receiptSentBoth
-      : emailSent
-        ? t.success.receiptSentEmail
-        : t.success.receiptPending;
-  const actionMessage = [email.message, sms.message].filter(Boolean);
+    : emailSent
+      ? t.success.receiptSentEmail
+      : t.success.receiptPending;
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -267,22 +262,10 @@ export default function HolidayOrderSuccess() {
                 onClick={email.send}
                 t={t}
               />
-              {order.smsConsent && (
-                <ActionButton
-                  icon={MessageSquare}
-                  label={t.success.resendText}
-                  status={sms.status}
-                  locked={sms.locked}
-                  onClick={sms.send}
-                  t={t}
-                />
-              )}
             </div>
-            {actionMessage.length > 0 && (
-              <div role="status" className="no-print mt-3 space-y-1 text-center text-xs text-crimson">
-                {actionMessage.map((m) => (
-                  <p key={m}>{m}</p>
-                ))}
+            {email.message && (
+              <div role="status" className="no-print mt-3 text-center text-xs text-crimson">
+                <p>{email.message}</p>
               </div>
             )}
           </div>

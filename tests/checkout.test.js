@@ -15,7 +15,6 @@ function validBody(overrides = {}) {
     fulfillment: "pickup",
     scheduledDate: "2026-12-20",
     scheduledTime: "14:00",
-    smsConsent: false,
     lang: "en",
     ...overrides,
   };
@@ -119,20 +118,21 @@ describe("POST /api/checkout validation", () => {
   });
 });
 
-describe("POST /api/checkout SMS consent", () => {
-  it("records consent with a version and server timestamp when opted in", async () => {
-    await run(validBody({ smsConsent: true, lang: "es" }));
-    const meta = createdMetadata();
-    expect(meta.smsConsent).toBe("true");
-    expect(meta.smsConsentVersion).toBeTruthy();
-    expect(Number.isNaN(Date.parse(meta.smsConsentAt))).toBe(false);
-    expect(meta.smsConsentLang).toBe("es");
+describe("POST /api/checkout without SMS", () => {
+  it("ignores smsConsent fields sent by an old or tampered client", async () => {
+    const res = await run(validBody({ smsConsent: true, smsConsentAt: new Date().toISOString() }));
+    expect(res.statusCode).toBe(200);
+    const keys = Object.keys(createdMetadata());
+    expect(keys.filter((k) => /sms/i.test(k))).toEqual([]);
   });
 
-  it("treats anything but literal true as no consent", async () => {
-    await run(validBody({ smsConsent: "true" }));
-    const meta = createdMetadata();
-    expect(meta.smsConsent).toBe("false");
-    expect(meta.smsConsentAt).toBe("");
+  it("stores the customer's language for the receipt", async () => {
+    await run(validBody({ lang: "es" }));
+    expect(createdMetadata().lang).toBe("es");
+  });
+
+  it("defaults any other language to English", async () => {
+    await run(validBody({ lang: "fr" }));
+    expect(createdMetadata().lang).toBe("en");
   });
 });

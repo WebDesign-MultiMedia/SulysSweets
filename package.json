@@ -20,7 +20,6 @@
     "resend": "^6.18.1",
     "stripe": "^22.4.0",
     "three": "^0.134.0",
-    "twilio": "^6.0.2",
     "vanta": "^0.5.24"
   },
   "devDependencies": {

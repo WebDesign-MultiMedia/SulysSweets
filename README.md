@@ -3,13 +3,13 @@
 [![CI](https://github.com/WebDesign-MultiMedia/SulysSweets/actions/workflows/ci.yml/badge.svg)](https://github.com/WebDesign-MultiMedia/SulysSweets/actions/workflows/ci.yml)
 ![Lighthouse accessibility 100](https://img.shields.io/badge/Lighthouse%20accessibility-100-brightgreen)
 ![Lighthouse desktop performance 98](https://img.shields.io/badge/Lighthouse%20performance%20(desktop)-98-brightgreen)
-![Tests 42 passing](https://img.shields.io/badge/tests-42%20passing-brightgreen)
+![Tests 51 passing](https://img.shields.io/badge/tests-51%20passing-brightgreen)
 
 **Live site:** https://sulys-sweets.vercel.app
 
-A production-style, bilingual (English / Español) website for **Suly's Sweets**, a home bakery in Pelham Bay, Bronx, NY that makes custom cakes, cupcakes, chocolate-covered strawberries and dessert tables. It is a real client project. It has a marketing site and a full **holiday pre-order web app** with a cart, Stripe Checkout (50% deposit), and automatic email and SMS receipts.
+A production-style, bilingual (English / Español) website for **Suly's Sweets**, a home bakery in Pelham Bay, Bronx, NY that makes custom cakes, cupcakes, chocolate-covered strawberries and dessert tables. It is a real client project. It has a marketing site and a full **holiday pre-order web app** with a cart, Stripe Checkout (50% deposit), and automatic email receipts.
 
-> **Demo mode:** the live deployment runs without payment or messaging keys, so nobody can be charged and no real receipts are sent. You can still click through the whole ordering flow; the app detects this and walks you through a realistic demo order instead. Add the keys and the same code runs for real (see [Running it for real](#running-it-for-real)).
+> **Demo mode:** the live deployment runs without payment or email keys, so nobody can be charged and no real receipts are sent. You can still click through the whole ordering flow; the app detects this and walks you through a realistic demo order instead. Add the keys and the same code runs for real (see [Running it for real](#running-it-for-real)).
 
 ![Suly's Sweets home page](docs/screenshots/home-desktop.jpg)
 
@@ -17,7 +17,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 
 | Holiday menu | Cart & checkout | Order confirmation |
 | --- | --- | --- |
-| ![Holiday ordering page with demo-mode banner](docs/screenshots/holiday-menu-desktop.jpg) | ![Cart drawer with pickup scheduling, contact info and SMS consent](docs/screenshots/cart-desktop.jpg) | ![Order confirmation with receipt and resend buttons](docs/screenshots/confirmation-desktop.jpg) |
+| ![Holiday ordering page with demo-mode banner](docs/screenshots/holiday-menu-desktop.jpg) | ![Cart drawer with pickup scheduling, contact info](docs/screenshots/cart-desktop.jpg) | ![Order confirmation with receipt and resend buttons](docs/screenshots/confirmation-desktop.jpg) |
 
 | Menu | Gallery | Confirmation in Spanish |
 | --- | --- | --- |
@@ -34,10 +34,10 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ## What to try (2-minute tour)
 
 1. **Home page** (`/`): animated hero, gallery with a lightbox, the menu with prices, an Instagram section and a contact form.
-2. **Language toggle:** switch between English and Spanish (on the home page or the holiday menu). Every page, the cart, product names, errors, legal pages and the SMS receipt are translated.
-3. **Holiday menu** (`/holiday-order`): add items to the cart, choose pickup or delivery, pick a date and time, and opt in to text updates.
-4. **Checkout:** in demo mode you land on the order confirmation page with a sample receipt, "Resend email" and "Resend text" buttons.
-5. **Legal pages:** `/privacy` and `/terms`. These are the pages needed for SMS (A2P 10DLC) carrier registration.
+2. **Language toggle:** switch between English and Spanish (on the home page or the holiday menu). Every page, the cart, product names, errors, legal pages and the order confirmation page are translated.
+3. **Holiday menu** (`/holiday-order`): add items to the cart, choose pickup or delivery, pick a date and time, and enter your contact details.
+4. **Checkout:** in demo mode you land on the order confirmation page with a sample receipt and a "Resend email" button.
+5. **Legal pages:** `/privacy` and `/terms`, in both languages.
 
 ---
 
@@ -51,12 +51,11 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 - **Holiday cart:** quantities, sizes and flavors, pickup or delivery, scheduling, and a running total with the 50% deposit.
 - **Order confirmation page** that loads the real order from Stripe and shows receipt status.
 
-### Payments & messaging (serverless backend)
-- **Stripe Checkout:** the server re-prices every cart item from its own price list, so nobody can change prices in the browser.
-- **Stripe webhook** with signature verification sends receipts once the payment is confirmed.
-- **Email receipts** through Resend and **SMS receipts** through Twilio (the SMS is sent in the customer's language).
-- **Duplicate-proof receipts:** the send count and timestamps are stored on the Stripe session. Each channel is limited to 2 sends with a 60-second cooldown, and a send that fails is rolled back.
-- **SMS consent (TCPA / 10DLC):** an optional, unchecked opt-in checkbox. The consent, its timestamp, the policy version and the language are saved with the order. Texts are never sent without consent and always include STOP/HELP.
+### Payments & receipts (serverless backend)
+- **Stripe Checkout with server-side price validation:** the server re-prices every cart item from its own price list, so nobody can change prices in the browser.
+- **Signature-verified Stripe webhook** sends the receipt once the payment is confirmed.
+- **Email receipts** through Resend. Email is the only receipt channel; the phone number is used only to contact the customer about their order.
+- **Idempotent, rate-limited resend:** the send count and timestamp are stored on the Stripe session, so webhook retries never send twice. The "Resend email" button is limited to 2 sends per order with a 60-second cooldown, and a send that fails is rolled back.
 - **Large-cart support:** order items are split across Stripe's 500-character metadata limit.
 - **Safe error handling:** the API returns generic error codes that the browser translates. Details are logged on the server only.
 - **Automatic demo mode:** `/api/status` tells the browser whether checkout is live. The demo is used only when checkout isn't set up, never to hide a real error.
@@ -64,7 +63,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ### Security & quality
 - Security headers set in `vercel.json` (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`).
 - No secrets in the repo; every key is an environment variable (see `.env.example`).
-- **42 automated tests** (Vitest) covering pricing, validation, SMS consent, receipt rate limiting and rollback, metadata chunking, and translation completeness. Stripe, Resend and Twilio are mocked, so tests never call real services.
+- **51 automated tests** (Vitest) covering pricing, validation, the webhook's single email receipt, receipt rate limiting and rollback, metadata chunking, and translation completeness. Stripe and Resend are mocked, so tests never call real services.
 - **GitHub Actions CI** on every push: clean install, syntax check of every API function, tests, production build, and `npm audit` for high-severity issues.
 - **Lighthouse:** 100 accessibility, best practices and SEO on mobile and desktop; performance 98 on desktop and about 80 on mobile (see below).
 
@@ -73,12 +72,12 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ## Challenges & decisions
 
 **1. Stopping duplicate and spam receipts**
-- *Problem:* Stripe may deliver the same webhook event more than once, and customers can keep pressing "Resend". That could text a customer five times or let someone use the endpoint to spam a phone number.
-- *Approach:* receipt state lives on the Stripe session itself. Before a send, the server writes the new count and timestamp (reserving the slot), then sends, and rolls the reservation back if the provider fails. Resends need a paid order, a valid session ID, and (for SMS) recorded consent.
-- *Result:* at most 2 sends per channel per order (the automatic one counts), a 60-second cooldown, and a retry after a failure never double-sends. No extra infrastructure was needed.
+- *Problem:* Stripe may deliver the same webhook event more than once, and customers can keep pressing "Resend". That could email a customer five times or let someone use the endpoint to spam an inbox.
+- *Approach:* receipt state lives on the Stripe session itself. Before a send, the server writes the new count and timestamp (reserving the slot), then sends, and rolls the reservation back if the provider fails. Resends need a paid order and a valid session ID.
+- *Result:* at most 2 email sends per order (the automatic one counts), a 60-second cooldown, and a retry after a failure never double-sends. No extra infrastructure was needed.
 
 **2. No database, on purpose**
-- *Decision:* the Stripe Checkout session *is* the order record. Items, schedule, contact info, consent and receipt state are all stored in its metadata.
+- *Decision:* the Stripe Checkout session *is* the order record. Items, schedule, contact info, language and receipt state are all stored in its metadata.
 - *Trade-off:* orders can't be searched outside the Stripe Dashboard. In exchange there is nothing extra to host, pay for, back up or secure. For a one-person bakery that's the right call. A database can be added later without changing the checkout flow.
 
 **3. Never trusting prices from the browser**
@@ -89,19 +88,15 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 - *Problem:* the site needs to be a clickable demo without live keys, but an earlier version showed a fake "Thank you!" page whenever checkout failed for *any* reason. A real customer could think they'd ordered when they hadn't.
 - *Approach:* `/api/status` reports `live` or `demo`. The browser falls back to the demo only when checkout isn't configured or the API is unreachable. Real errors (bad input, Stripe declining) show a translated error message instead.
 
-**5. SMS compliance (TCPA / A2P 10DLC)**
-- *Problem:* US carriers block business numbers that text without clear consent.
-- *Approach:* an optional, unchecked opt-in that links to the Privacy Policy and Terms. The server stores the consent flag, its timestamps, the policy version and the language with the order. Texts are only sent with consent and always include STOP/HELP. `/privacy` and `/terms` are bilingual and written to support carrier registration.
-
-**6. Fitting big orders into Stripe metadata**
+**5. Fitting big orders into Stripe metadata**
 - *Problem:* Stripe allows only 500 characters per metadata value, so a large cart overflowed and checkout failed.
 - *Approach:* the items are serialized and split across `items`, `items_1`, `items_2`, … and reassembled when the order is read back. A size limit returns a clear "cart too large" error instead of a crash.
 
-**7. A $0 bug that the tests caught**
+**6. A $0 bug that the tests caught**
 - *Problem:* while writing tests for checkout pricing, a test that sent a made-up size (for example `size: "fake"`) came back priced at **$0**. Next to a real item, that item would have been free.
 - *Approach:* `/api/checkout` now rejects any option that isn't on the menu. The test that found it stays in the suite, and it fails against the old code.
 
-**8. Making the phone version fast**
+**7. Making the phone version fast**
 - *Problem:* Lighthouse mobile scored 71, with the main content taking about 10 seconds to appear on a simulated phone connection. The page was downloading about 5 MB of images up front: a 941 KB logo shown at 40 px, and every cake photo, including ones in sections hidden on phones (browsers still fetch lazy images inside hidden sections).
 - *Approach:* phone sections are only put on the page once visited; the About slideshow keeps 3 slides on the page instead of 11; logos are resized (941 KB → 32 KB) and the hero photos converted to WebP (319 KB → 40 KB); the three.js background starts after the page has loaded; and the hero uses a CSS entrance animation so it paints on the first frame instead of waiting for JavaScript.
 - *Result:* mobile performance went from about 71 to about 80–85, and the first load on phones fetches 3 images instead of about 14. Accessibility went from 95 to 100 after raising footer text contrast and fixing the language toggle's accessible name.
@@ -127,9 +122,10 @@ npm test
 
 | File | What it checks |
 | --- | --- |
-| `tests/checkout.test.js` | Server-side pricing, 50% deposit, ignoring browser prices, quantity cap, unknown products and options, input validation, demo-mode response, SMS consent recording |
-| `tests/resendReceipt.test.js` | Unpaid orders, no-consent SMS, 2-send limit, 60-second cooldown, reserve-then-send, rollback on provider failure, E.164 phone format and STOP/HELP wording |
-| `tests/stripeOrder.test.js` | Splitting items across 500-character metadata values and reading them back, session ID validation, consent parsing |
+| `tests/checkout.test.js` | Server-side pricing, 50% deposit, ignoring browser prices, quantity cap, unknown products and options, input validation, demo-mode response, extra fields from old clients ignored, language stored |
+| `tests/resendReceipt.test.js` | Email resend: unpaid orders, 2-send limit, 60-second cooldown (and resend after it), reserve-then-send, rollback on provider failure |
+| `tests/webhook.test.js` | Exactly one email receipt per paid checkout, no resend on Stripe retries, unpaid sessions and bad signatures send nothing, the email sender is the only receipt channel |
+| `tests/stripeOrder.test.js` | Splitting items across 500-character metadata values and reading them back, session ID validation, order language |
 | `tests/i18n.test.js` | English and Spanish have the same keys, every product has a Spanish name, Spanish date formatting |
 
 ---
@@ -144,9 +140,8 @@ npm test
 | Backend | Vercel Serverless Functions (Node.js, `/api`) |
 | Payments | Stripe Checkout + webhooks (`stripe`, `@stripe/stripe-js`) |
 | Email | Resend |
-| SMS | Twilio |
 | i18n | Custom React context + translation dictionary (EN/ES) |
-| Testing | Vitest (with mocked Stripe, Resend and Twilio), Lighthouse |
+| Testing | Vitest (with mocked Stripe and Resend), Lighthouse |
 | Hosting & CI/CD | Vercel (auto-deploys from `main`), GitHub Actions |
 
 ---
@@ -161,21 +156,20 @@ Browser (React SPA)
  └─ /privacy, /terms
 
 Stripe ──(checkout.session.completed)──► POST /api/webhook
-                                           ├─ email receipt (Resend)
-                                           └─ SMS receipt (Twilio, only with consent)
+                                           └─ email receipt (Resend, sent once per order)
 
-POST /api/send-email, /api/send-sms   customer-triggered resend (rate-limited)
-GET  /api/status                      { checkout: "live" | "demo" }
+POST /api/send-email   customer-triggered email resend (rate-limited)
+GET  /api/status       { checkout: "live" | "demo" }
 ```
 
-There is no database. **The Stripe Checkout session is the order record**: items, contact info, schedule, consent and receipt state all live in its metadata. That keeps the app cheap and simple to run for a small business.
+There is no database. **The Stripe Checkout session is the order record**: items, contact info, schedule, language and receipt state all live in its metadata. That keeps the app cheap and simple to run for a small business.
 
 ### Project structure
 
 ```
 api/                 Serverless functions (each file is an endpoint)
   _lib/              Shared helpers (not routes): Stripe order encoding,
-                     receipt rate limiting, email/SMS senders
+                     receipt rate limiting, email sender
 src/
   components/        Home page sections and shared UI
   components/holiday/  Holiday ordering UI (cart drawer, product cards, snow)
@@ -217,7 +211,6 @@ Set these environment variables in Vercel (names only; see `.env.example`):
 | `STRIPE_SECRET_KEY` | Creates Checkout sessions; switches off demo mode |
 | `STRIPE_WEBHOOK_SECRET` | Verifies `/api/webhook` events |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Email receipts |
-| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | SMS receipts |
 
 Use Stripe **test mode** keys first. Test card: `4242 4242 4242 4242`, any future date, any CVC.
 

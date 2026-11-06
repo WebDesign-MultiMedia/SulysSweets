@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CreditCard, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useHolidayCart } from "../../context/HolidayCartContext";
@@ -40,15 +40,6 @@ export default function CartDrawer() {
   const tc = t.holiday.cart;
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
-  // Optional and unchecked by default — required for SMS (10DLC) compliance.
-  const [smsConsent, setSmsConsent] = useState(false);
-  const [smsConsentAt, setSmsConsentAt] = useState("");
-
-  const toggleSmsConsent = (checked) => {
-    setSmsConsent(checked);
-    setSmsConsentAt(checked ? new Date().toISOString() : "");
-  };
-
   const canCheckout =
     items.length > 0 &&
     customer.name.trim() &&
@@ -73,7 +64,6 @@ export default function CartDrawer() {
       subtotal,
       depositDue,
       remainingBalance,
-      smsConsent,
     });
     navigate(`/holiday-order/success?session_id=${order.sessionId}`);
   };
@@ -94,8 +84,6 @@ export default function CartDrawer() {
           deliveryAddress: fulfillment === "delivery" ? deliveryAddress : "",
           scheduledDate,
           scheduledTime,
-          smsConsent,
-          smsConsentAt: smsConsent ? smsConsentAt : "",
           lang,
         }),
       });
@@ -294,30 +282,11 @@ export default function CartDrawer() {
                     <input
                       type="tel"
                       placeholder={tc.phone}
+                      aria-label={tc.phone}
                       value={customer.phone}
                       onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
                       className={inputClass}
                     />
-                    <label className="flex items-start gap-2.5 text-xs leading-relaxed text-espresso/80">
-                      <input
-                        type="checkbox"
-                        checked={smsConsent}
-                        onChange={(e) => toggleSmsConsent(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 flex-shrink-0 accent-forest"
-                      />
-                      <span>
-                        {t.cart.smsConsent.before}
-                        <Link to="/privacy" target="_blank" rel="noopener" className="text-forest underline">
-                          {t.cart.smsConsent.privacy}
-                        </Link>
-                        {t.cart.smsConsent.and}
-                        <Link to="/terms" target="_blank" rel="noopener" className="text-forest underline">
-                          {t.cart.smsConsent.terms}
-                        </Link>
-                        {t.cart.smsConsent.after}{" "}
-                        <span className="text-espresso/55">{t.cart.smsConsent.optional}</span>
-                      </span>
-                    </label>
                   </div>
                 </>
               )}

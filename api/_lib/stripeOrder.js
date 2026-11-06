@@ -61,10 +61,8 @@ export function reconstructOrder(session) {
     deliveryAddress: metadata.deliveryAddress || "",
     scheduledDate: metadata.scheduledDate || "",
     scheduledTime: metadata.scheduledTime || "",
-    lang: metadata.smsConsentLang === "es" ? "es" : "en",
-    // Orders created before the consent checkbox existed have no smsConsent
-    // key — treat those as "no consent" so we never text without opt-in.
-    smsConsent: metadata.smsConsent === "true",
+    // Older orders stored the language under smsConsentLang.
+    lang: (metadata.lang || metadata.smsConsentLang) === "es" ? "es" : "en",
     customer: {
       name: metadata.customerName || session.customer_details?.name || "",
       email: session.customer_details?.email || metadata.customerEmail || "",

@@ -1,5 +1,5 @@
 import { getStripe, reconstructOrder } from "./_lib/stripeOrder.js";
-import { canText, sendEmailReceipt, sendSmsReceipt } from "./_lib/sendReceipts.js";
+import { sendEmailReceipt } from "./_lib/sendReceipts.js";
 import { getReceiptState, sendWithReservation } from "./_lib/receiptState.js";
 
 // Stripe requires the raw, unparsed request body to verify the webhook
@@ -17,7 +17,7 @@ function readRawBody(req) {
   });
 }
 
-// Sends one channel's receipt unless it was already sent for this order
+// Sends the receipt unless it was already sent for this order
 // (Stripe can deliver the same event more than once).
 async function sendOnce(session, channel, send) {
   if (getReceiptState(session, channel).sent) {
@@ -62,13 +62,7 @@ export default async function handler(req, res) {
 
       if (session.payment_status === "paid") {
         const order = reconstructOrder(session);
-        const origin = `https://${req.headers.host}`;
-
-        // Sequential so the two metadata updates don't race each other.
         await sendOnce(session, "email", () => sendEmailReceipt(order));
-        if (canText(order)) {
-          await sendOnce(session, "sms", () => sendSmsReceipt(order, origin));
-        }
       }
     } catch (err) {
       // Logged but still acknowledged: a retry would only risk duplicate

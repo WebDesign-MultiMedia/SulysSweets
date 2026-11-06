@@ -7,10 +7,6 @@ import {
 } from "./_lib/stripeOrder.js";
 import { HOLIDAY_PRODUCTS, computeUnitPrice, describeSelections, findOption } from "../src/data/holidayMenu.js";
 
-// Bump when the consent wording in translations.js (cart.smsConsent) changes,
-// so each order records which version of the text the customer agreed to.
-const SMS_CONSENT_VERSION = "2026-11-05";
-
 class UnknownProductError extends Error {}
 
 // Prices are recomputed here from the product catalog rather than trusted from
@@ -47,10 +43,6 @@ function fail(res, status, code) {
   return res.status(status).json({ error: code });
 }
 
-function isValidIsoDate(value) {
-  return typeof value === "string" && value.length <= 40 && !Number.isNaN(Date.parse(value));
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -65,8 +57,6 @@ export default async function handler(req, res) {
       deliveryAddress,
       scheduledDate,
       scheduledTime,
-      smsConsent,
-      smsConsentAt,
       lang,
     } = req.body || {};
 
@@ -80,17 +70,6 @@ export default async function handler(req, res) {
     const subtotal = validatedItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
     const depositDue = Math.round(subtotal * 50) / 100;
     const remainingBalance = subtotal - depositDue;
-
-    // Only an explicit `true` counts as consent. The server's clock is the
-    // record of when consent was given; the browser's timestamp is kept too.
-    const consented = smsConsent === true;
-    const consentMetadata = {
-      smsConsent: consented ? "true" : "false",
-      smsConsentAt: consented ? new Date().toISOString() : "",
-      smsConsentClientAt: consented && isValidIsoDate(smsConsentAt) ? smsConsentAt : "",
-      smsConsentVersion: consented ? SMS_CONSENT_VERSION : "",
-      smsConsentLang: lang === "es" ? "es" : "en",
-    };
 
     const stripe = getStripe();
     const origin = req.headers.origin || `https://${req.headers.host}`;
@@ -123,7 +102,8 @@ export default async function handler(req, res) {
         subtotal: subtotal.toFixed(2),
         depositDue: depositDue.toFixed(2),
         remainingBalance: remainingBalance.toFixed(2),
-        ...consentMetadata,
+        // The customer's language, so the email receipt matches the site.
+        lang: lang === "es" ? "es" : "en",
         ...encodeItemsMetadata(validatedItems),
       },
     });

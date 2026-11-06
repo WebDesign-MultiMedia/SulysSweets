@@ -42,14 +42,18 @@ describe("isValidSessionId", () => {
   });
 });
 
-describe("reconstructOrder SMS consent", () => {
-  it("is true only for the exact string 'true'", () => {
-    expect(reconstructOrder(sessionWith({ smsConsent: "true" })).smsConsent).toBe(true);
-    expect(reconstructOrder(sessionWith({ smsConsent: "false" })).smsConsent).toBe(false);
-    expect(reconstructOrder(sessionWith({ smsConsent: "yes" })).smsConsent).toBe(false);
+describe("reconstructOrder language", () => {
+  it("reads the lang key", () => {
+    expect(reconstructOrder(sessionWith({ lang: "es" })).lang).toBe("es");
+    expect(reconstructOrder(sessionWith({ lang: "en" })).lang).toBe("en");
   });
 
-  it("treats older orders without the key as no consent", () => {
-    expect(reconstructOrder(sessionWith({})).smsConsent).toBe(false);
+  it("falls back to the key older orders used, then English", () => {
+    expect(reconstructOrder(sessionWith({ smsConsentLang: "es" })).lang).toBe("es");
+    expect(reconstructOrder(sessionWith({})).lang).toBe("en");
+  });
+
+  it("has no SMS consent field", () => {
+    expect(reconstructOrder(sessionWith({ smsConsent: "true" }))).not.toHaveProperty("smsConsent");
   });
 });

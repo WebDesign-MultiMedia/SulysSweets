@@ -1,16 +1,16 @@
 // Tracks receipt sends per order in the Stripe Checkout Session metadata so
 // receipts are idempotent (webhook retries don't resend) and the resend
-// buttons can't be used to spam a customer.
+// button can't be used to spam a customer.
 //
-// Keys: receipt_email_count, receipt_email_sent_at, receipt_sms_count,
-// receipt_sms_sent_at. The webhook's automatic send counts toward the limit.
+// Keys: receipt_email_count, receipt_email_sent_at. The webhook's automatic
+// send counts toward the limit.
 
 import { getStripe } from "./stripeOrder.js";
 
 export const MAX_SENDS_PER_CHANNEL = 2;
 export const RESEND_COOLDOWN_MS = 60 * 1000;
 
-export const CHANNELS = ["email", "sms"];
+export const CHANNELS = ["email"];
 
 function keys(channel) {
   return { count: `receipt_${channel}_count`, sentAt: `receipt_${channel}_sent_at` };
@@ -36,7 +36,7 @@ async function writeState(sessionId, channel, count, sentAt) {
   });
 }
 
-// Reserve a send *before* calling Resend/Twilio so a concurrent duplicate
+// Reserve a send *before* calling Resend so a concurrent duplicate
 // (e.g. a retried webhook) sees the updated count. Stripe metadata has no
 // compare-and-set, so a tiny race window remains; the cooldown narrows it.
 // If the provider call fails, the reservation is rolled back so the
