@@ -23,23 +23,37 @@ export default function VantaBackground() {
     if (reducedMotion || !ref.current) return;
 
     let cancelled = false;
+    let idleId;
 
-    Promise.all([import("three"), import("vanta/dist/vanta.fog.min")]).then(([THREE, { default: FOG }]) => {
-      if (cancelled || !ref.current) return;
-      effectRef.current = FOG({
-        el: ref.current,
-        THREE,
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.0,
-        minWidth: 200.0,
-        ...FOG_OPTIONS,
+    // three.js is large. Start it only after the page has loaded and the
+    // browser is idle, so the hero text paints first (faster LCP on phones).
+    const start = () => {
+      Promise.all([import("three"), import("vanta/dist/vanta.fog.min")]).then(([THREE, { default: FOG }]) => {
+        if (cancelled || !ref.current) return;
+        effectRef.current = FOG({
+          el: ref.current,
+          THREE,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          ...FOG_OPTIONS,
+        });
       });
-    });
+    };
+    const hasIdle = typeof window.requestIdleCallback === "function";
+    const schedule = () => {
+      idleId = hasIdle ? window.requestIdleCallback(start, { timeout: 2500 }) : window.setTimeout(start, 1200);
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
 
     return () => {
       cancelled = true;
+      window.removeEventListener("load", schedule);
+      if (hasIdle) window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
       effectRef.current?.destroy();
       effectRef.current = null;
     };

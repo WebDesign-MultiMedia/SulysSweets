@@ -7,7 +7,6 @@ export default function LanguageToggle({ className = "" }) {
     <button
       type="button"
       onClick={toggleLang}
-      aria-label="Switch language / Cambiar idioma"
       className={`inline-flex items-center rounded-full bg-plum/5 p-0.5 text-xs font-semibold tracking-wide ring-1 ring-plum/15 ${className}`}
     >
       <span
@@ -24,6 +23,7 @@ export default function LanguageToggle({ className = "" }) {
       >
         ES
       </span>
+      <span className="sr-only">Switch language / Cambiar idioma</span>
     </button>
   );
 }

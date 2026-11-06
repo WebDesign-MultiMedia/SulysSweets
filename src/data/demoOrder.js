@@ -27,6 +27,8 @@ export function createDemoOrder({
     date: new Date().toISOString(),
     paymentStatus: "paid",
     items: items.map((item) => ({
+      productId: item.productId,
+      selections: item.selections,
       name: item.name,
       selectionLabel: item.selectionLabel,
       quantity: item.quantity,

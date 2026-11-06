@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.13.0",
@@ -26,6 +27,7 @@
     "@tailwindcss/vite": "^4",
     "@vitejs/plugin-react": "^4",
     "tailwindcss": "^4",
-    "vite": "^6"
+    "vite": "^6",
+    "vitest": "^5.1.0"
   }
 }

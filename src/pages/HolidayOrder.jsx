@@ -11,9 +11,11 @@ import HolidayVantaBackground from "../components/holiday/HolidayVantaBackground
 import HolidayFooter from "../components/holiday/HolidayFooter";
 import DemoNotice from "../components/holiday/DemoNotice";
 import { HOLIDAY_PRODUCTS } from "../data/holidayMenu";
+import { useLanguage } from "../i18n/LanguageContext";
 
 function HolidayOrderContent() {
   const [viewMode, setViewMode] = useState("image");
+  const { t } = useLanguage();
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -29,7 +31,7 @@ function HolidayOrderContent() {
 
         <h2 className="flex items-center justify-center gap-3 text-center font-display text-3xl text-cashmere">
           <TreePine className="h-6 w-6 text-gold-light" aria-hidden="true" />
-          Shop the Menu
+          {t.holiday.menu.title}
           <TreePine className="h-6 w-6 -scale-x-100 text-gold-light" aria-hidden="true" />
         </h2>
 
@@ -38,26 +40,24 @@ function HolidayOrderContent() {
             <button
               type="button"
               onClick={() => setViewMode("image")}
-              aria-label="Image view"
               aria-pressed={viewMode === "image"}
               className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm tracking-wide transition-colors duration-200 ${
                 viewMode === "image" ? "bg-forest text-cashmere" : "text-espresso"
               }`}
             >
               <ImageIcon className="h-4 w-4" />
-              Image view
+              {t.holiday.menu.imageView}
             </button>
             <button
               type="button"
               onClick={() => setViewMode("list")}
-              aria-label="List view"
               aria-pressed={viewMode === "list"}
               className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm tracking-wide transition-colors duration-200 ${
                 viewMode === "list" ? "bg-forest text-cashmere" : "text-espresso"
               }`}
             >
               <ListIcon className="h-4 w-4" />
-              List view
+              {t.holiday.menu.listView}
             </button>
           </div>
         </div>

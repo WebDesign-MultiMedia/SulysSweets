@@ -5,7 +5,7 @@ import {
   getStripe,
   truncateMeta,
 } from "./_lib/stripeOrder.js";
-import { HOLIDAY_PRODUCTS, computeUnitPrice, describeSelections } from "../src/data/holidayMenu.js";
+import { HOLIDAY_PRODUCTS, computeUnitPrice, describeSelections, findOption } from "../src/data/holidayMenu.js";
 
 // Bump when the consent wording in translations.js (cart.smsConsent) changes,
 // so each order records which version of the text the customer agreed to.
@@ -20,11 +20,24 @@ function revalidateItems(rawItems) {
     const product = HOLIDAY_PRODUCTS.find((p) => p.id === raw?.productId);
     if (!product) throw new UnknownProductError(`Unknown product: ${raw?.productId}`);
 
+    // Every option group must name a real option. Without this, an invalid
+    // size id would price the item at $0.
+    for (const group of product.variantGroups) {
+      if (!findOption(product, group.id, raw.selections?.[group.id])) {
+        throw new UnknownProductError(`Invalid ${group.id} for ${product.id}`);
+      }
+    }
+
     const quantity = Math.min(99, Math.max(1, Math.floor(Number(raw.quantity) || 1)));
     const unitPrice = computeUnitPrice(product, raw.selections);
     const selectionLabel = describeSelections(product, raw.selections);
 
-    return { name: product.name, selectionLabel, quantity, unitPrice };
+    // productId + selections let the confirmation page show names in the
+    // customer's language; name/selectionLabel stay English for receipts.
+    const selections = Object.fromEntries(
+      product.variantGroups.map((group) => [group.id, String(raw.selections[group.id])]),
+    );
+    return { productId: product.id, selections, name: product.name, selectionLabel, quantity, unitPrice };
   });
 }
 

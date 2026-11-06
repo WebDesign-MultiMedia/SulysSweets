@@ -4,7 +4,7 @@ import { InstagramIcon } from "./icons";
 import { useLanguage } from "../i18n/LanguageContext";
 
 const linkClass = "text-sm text-plum/70 transition-colors hover:text-mauve-dark";
-const headingClass = "text-[11px] font-medium tracking-[0.3em] text-mauve-dark uppercase";
+const headingClass = "text-[11px] font-medium tracking-[0.3em] text-mauve-deep uppercase";
 
 export default function Footer({ onNavigate }) {
   const { lang, t } = useLanguage();
@@ -22,10 +22,10 @@ export default function Footer({ onNavigate }) {
       <div className="mx-auto grid max-w-6xl gap-10 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="flex flex-col items-center gap-4 sm:items-start">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="" width={48} height={48} className="h-12 w-12 rounded-full ring-1 ring-plum/10" />
+            <img src="/logo-256.png" alt="" width={48} height={48} className="h-12 w-12 rounded-full ring-1 ring-plum/10" />
             <p className="font-display text-2xl">Suly&apos;s Sweets</p>
           </div>
-          <p className="max-w-xs text-sm leading-relaxed text-plum/65">{t.footer.tagline}</p>
+          <p className="max-w-xs text-sm leading-relaxed text-plum/80">{t.footer.tagline}</p>
           <p className="font-script text-2xl text-mauve-dark">{thankYouNote}</p>
         </div>
 
@@ -71,7 +71,7 @@ export default function Footer({ onNavigate }) {
                 @sulys_sweets
               </a>
             </li>
-            <li className="text-sm text-plum/55">Pelham Bay, Bronx, NY</li>
+            <li className="text-sm text-plum/75">Pelham Bay, Bronx, NY</li>
           </ul>
         </div>
 
@@ -92,7 +92,7 @@ export default function Footer({ onNavigate }) {
         </div>
       </div>
 
-      <div className="mx-auto mt-14 max-w-6xl border-t border-plum/10 pt-6 text-center text-xs text-plum/50">
+      <div className="mx-auto mt-14 max-w-6xl border-t border-plum/10 pt-6 text-center text-xs text-plum/75">
         {t.footer.copyright(new Date().getFullYear())}
       </div>
     </footer>

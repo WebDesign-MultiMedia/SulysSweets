@@ -44,18 +44,25 @@ export default function AboutSlideshow({ className }) {
   return (
     <>
       <div className={`relative overflow-hidden  ${className ?? ""}`}>
-        {slides.map((slide, i) => (
-          <img
-            key={slide.src}
-            src={slide.src}
-            alt={slide.alt}
-            loading="lazy"
-            onClick={() => i === index && setLightboxOpen(true)}
-            className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-[1500ms] ease-in-out ${
-              i === index ? "cursor-zoom-in opacity-100" : "pointer-events-none opacity-0"
-            }`}
-          />
-        ))}
+        {/* Only the previous (fading out), current and next (preloaded)
+            slides are on the page, so the other photos aren't all
+            downloaded on first load. */}
+        {slides.map((slide, i) => {
+          const n = slides.length;
+          if (i !== index && i !== (index + 1) % n && i !== (index - 1 + n) % n) return null;
+          return (
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              loading="lazy"
+              onClick={() => i === index && setLightboxOpen(true)}
+              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-[1500ms] ease-in-out ${
+                i === index ? "cursor-zoom-in opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            />
+          );
+        })}
       </div>
 
       {lightboxOpen &&

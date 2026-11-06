@@ -167,24 +167,55 @@ export function computeUnitPrice(product, selections) {
   return price;
 }
 
-export function describeSelections(product, selections) {
+// `catalog` is t.holiday.catalog from translations.js. It holds display
+// names for the current language; anything missing falls back to the
+// English name above. The server always uses the English names.
+export function productName(product, catalog) {
+  return catalog?.products?.[product.id]?.name ?? product.name;
+}
+
+export function productDescription(product, catalog) {
+  return catalog?.products?.[product.id]?.description ?? product.description;
+}
+
+export function groupLabel(group, catalog) {
+  return catalog?.groups?.[group.id] ?? group.label;
+}
+
+export function optionLabel(option, catalog) {
+  return catalog?.options?.[option.id] ?? option.label;
+}
+
+export function describeSelections(product, selections, catalog) {
   return product.variantGroups
     .map((group) => {
-      const option = findOption(product, group.id, selections[group.id]);
-      return option ? `${group.label}: ${option.label}` : null;
+      const option = findOption(product, group.id, selections?.[group.id]);
+      return option ? `${groupLabel(group, catalog)}: ${optionLabel(option, catalog)}` : null;
     })
     .filter(Boolean)
     .join(" · ");
+}
+
+// Display name and options for a cart or order item in the current
+// language. Orders saved before productId was stored keep their own text.
+export function localizeItem(item, catalog) {
+  const product = HOLIDAY_PRODUCTS.find((p) => p.id === item.productId);
+  if (!product) return { name: item.name, selectionLabel: item.selectionLabel };
+  return {
+    name: productName(product, catalog),
+    selectionLabel: describeSelections(product, item.selections || {}, catalog),
+  };
 }
 
 export function formatUSD(amount) {
   return amount.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
-export function formatScheduled(date, time) {
+export function formatScheduled(date, time, locale = "en-US") {
   if (!date || !time) return "";
   const dt = new Date(`${date}T${time}`);
-  const datePart = dt.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-  const timePart = dt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  return `${datePart} at ${timePart}`;
+  const datePart = dt.toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric" });
+  const timePart = dt.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" });
+  const joiner = locale.startsWith("es") ? (dt.getHours() % 12 === 1 ? "a la" : "a las") : "at";
+  return `${datePart} ${joiner} ${timePart}`;
 }

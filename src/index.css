@@ -6,6 +6,8 @@
   --color-plum: #3d2b39;
   --color-mauve: #b98c8c;
   --color-mauve-dark: #9c6c6c;
+  /* Darker mauve for small text on light backgrounds (WCAG AA contrast). */
+  --color-mauve-deep: #7d5555;
   --color-bronze: #a98859;
   --color-ivory: #f7e8d0;
   --color-terracotta: #c2703d;
@@ -127,9 +129,28 @@ h1, h2, h3, h4 {
   animation: home-float 7s ease-in-out infinite;
 }
 
+/* Above-the-fold entrance. Pure CSS so it starts on the first frame
+   instead of waiting for JavaScript. Starts at 0.01 opacity, not 0, so the
+   browser counts the text as painted right away (Largest Contentful Paint). */
+@keyframes home-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: home-rise 0.7s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
-  .animate-float {
+  .animate-float,
+  .animate-rise {
     animation: none;
   }
 }

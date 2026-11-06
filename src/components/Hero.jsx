@@ -10,6 +10,7 @@ export default function Hero({ onNavigate }) {
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
         <div className="text-center lg:text-left">
           <Reveal
+            immediate
             as="p"
             className="inline-flex items-center gap-2 rounded-full border border-mauve/30 bg-cream/60 px-4 py-1.5 text-[11px] font-medium tracking-[0.3em] text-mauve-dark uppercase backdrop-blur-sm"
           >
@@ -17,7 +18,7 @@ export default function Hero({ onNavigate }) {
             {t.hero.eyebrow}
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal immediate delay={120}>
             <h1 className="mt-7 font-display text-[clamp(3rem,7.5vw,5.75rem)] leading-[1.02] tracking-tight text-plum">
               {t.hero.titleLine1}
               <br />
@@ -26,6 +27,7 @@ export default function Hero({ onNavigate }) {
           </Reveal>
 
           <Reveal
+            immediate
             delay={240}
             as="p"
             className="mx-auto mt-7 max-w-md text-base leading-relaxed text-plum/75 sm:text-lg lg:mx-0"
@@ -33,7 +35,7 @@ export default function Hero({ onNavigate }) {
             {t.hero.paragraph}
           </Reveal>
 
-          <Reveal delay={360} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <Reveal immediate delay={360} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
             <a
               href="#menu"
               onClick={(e) => onNavigate("menu", e)}
@@ -51,7 +53,7 @@ export default function Hero({ onNavigate }) {
             </a>
           </Reveal>
 
-          <Reveal delay={480} as="ul" className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs tracking-wide text-plum/65 lg:justify-start">
+          <Reveal immediate delay={480} as="ul" className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs tracking-wide text-plum/65 lg:justify-start">
             {t.hero.highlights.map((item) => (
               <li key={item} className="flex items-center gap-2">
                 <span className="h-1 w-1 rounded-full bg-mauve-dark" aria-hidden="true" />
@@ -63,11 +65,11 @@ export default function Hero({ onNavigate }) {
 
         {/* Showcase: arched panel with the signature cake, a supporting
             treat, and the logo as a floating seal. */}
-        <Reveal delay={200} className="relative mx-auto w-full max-w-[22rem] sm:max-w-sm">
+        <Reveal immediate delay={200} className="relative mx-auto w-full max-w-[22rem] sm:max-w-sm">
           <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] bg-gradient-to-b from-cream/90 via-blush/80 to-ivory/90 ring-1 ring-white/70 shadow-[0_40px_70px_-30px_rgba(61,43,57,0.45)]">
             <div className="absolute inset-x-8 bottom-10 h-6 rounded-[50%] bg-plum/10 blur-md" aria-hidden="true" />
             <img
-              src="/SlideShow/whiteCake.png"
+              src="/hero-white-cake.webp"
               alt="Two-tier white cake with gold leaf and sugar roses by Suly's Sweets"
               width={506}
               height={900}
@@ -78,7 +80,7 @@ export default function Hero({ onNavigate }) {
 
           <div className="animate-float absolute -bottom-6 -left-4 w-28 rounded-3xl bg-cream/90 p-2 ring-1 ring-white/70 shadow-[0_20px_35px_-18px_rgba(61,43,57,0.45)] backdrop-blur-sm sm:-left-10 sm:w-32">
             <img
-              src="/hero-strawberry-cake.png"
+              src="/hero-strawberry-cake.webp"
               alt="Fresh strawberry cake by Suly's Sweets"
               width={288}
               height={288}
@@ -88,7 +90,7 @@ export default function Hero({ onNavigate }) {
           </div>
 
           <div className="absolute -top-4 -right-2 h-24 w-24 rounded-full bg-cream p-1.5 ring-1 ring-white/70 shadow-[0_16px_30px_-14px_rgba(61,43,57,0.5)] sm:-right-8 sm:h-28 sm:w-28">
-            <img src="/logo.png" alt="Suly's Sweets logo" width={112} height={112} className="h-full w-full rounded-full" />
+            <img src="/logo-256.png" alt="Suly's Sweets logo" width={112} height={112} className="h-full w-full rounded-full" />
           </div>
         </Reveal>
       </div>

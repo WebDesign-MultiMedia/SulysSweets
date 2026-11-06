@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
-import { HOLIDAY_BANNER } from "../../data/holidayMenu";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function HolidayHero() {
+  const { t } = useLanguage();
+  const hero = t.holiday.hero;
+
   return (
     <section className="relative mx-auto max-w-6xl px-5 pt-12 pb-10 sm:px-8 sm:pt-16">
       <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -10,17 +13,17 @@ export default function HolidayHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <p className="text-xs font-semibold tracking-[0.35em] text-gold-light uppercase">
-            Demo — no real payments
-          </p>
+          <p className="text-xs font-semibold tracking-[0.35em] text-gold-light uppercase">{hero.eyebrow}</p>
           <h1 className="mt-4 font-display text-5xl leading-tight text-cashmere sm:text-6xl">
-            Christmas<span className="text-gold-light">/</span>New Years
+            {hero.titleA}
+            <span className="text-gold-light">/</span>
+            {hero.titleB}
             <br />
-            <span className="font-holiday-script text-6xl text-gold-light sm:-7xl">Menu</span>
+            <span className="font-holiday-script text-6xl text-gold-light sm:-7xl">{hero.script}</span>
           </h1>
 
           <ul className="mt-6 flex flex-col gap-1.5 text-lg text-gold-light">
-            {HOLIDAY_BANNER.notes.map((note) => (
+            {hero.notes.map((note) => (
               <li key={note}>{note}</li>
             ))}
           </ul>
@@ -30,13 +33,13 @@ export default function HolidayHero() {
               href="#menu"
               className="rounded-full bg-gold px-7 py-3 text-sm font-semibold tracking-wide text-forest uppercase transition-transform hover:-translate-y-0.5"
             >
-              Shop the Menu
+              {hero.shop}
             </a>
             <a
               href="tel:3478595181"
               className="rounded-full border border-cashmere/30 px-7 py-3 text-sm text-cashmere transition-colors hover:border-gold-light hover:text-gold-light"
             >
-              Order Now: 347-859-5181
+              {hero.orderNow}
             </a>
           </div>
         </motion.div>
@@ -49,8 +52,8 @@ export default function HolidayHero() {
         >
           <div className="absolute inset-6 rounded-full bg-gold/10 blur-2xl" />
           <img
-            src="logo.png"
-            alt="Holiday cake by Suly's Sweets"
+            src="/logo-768.png"
+            alt={hero.logoAlt}
             className="relative h-full w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)]"
           />
         </motion.div>

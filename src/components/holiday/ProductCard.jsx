@@ -1,11 +1,25 @@
 import { useState } from "react";
 import { Minus, Plus, Snowflake } from "lucide-react";
-import { computeUnitPrice, defaultSelections, formatUSD, getDisplayImage } from "../../data/holidayMenu";
+import {
+  computeUnitPrice,
+  defaultSelections,
+  formatUSD,
+  getDisplayImage,
+  groupLabel,
+  optionLabel,
+  productDescription,
+  productName,
+} from "../../data/holidayMenu";
+import { useLanguage } from "../../i18n/LanguageContext";
 import { useHolidayCart } from "../../context/HolidayCartContext";
 import ZoomableImage from "../ZoomableImage";
 
 export default function ProductCard({ product, showImages = true }) {
   const { addItem } = useHolidayCart();
+  const { t } = useLanguage();
+  const catalog = t.holiday.catalog;
+  const name = productName(product, catalog);
+  const description = productDescription(product, catalog);
   const [selections, setSelections] = useState(() => defaultSelections(product));
   const [quantity, setQuantity] = useState(1);
 
@@ -31,7 +45,7 @@ export default function ProductCard({ product, showImages = true }) {
           {displayImage && (
             <ZoomableImage
               src={displayImage}
-              alt={product.name}
+              alt={name}
               className="h-full w-full scale-165 object-contain"
             />
           )}
@@ -43,14 +57,14 @@ export default function ProductCard({ product, showImages = true }) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="text-sm font-semibold text-espresso">{product.name}</h3>
-          {product.description && <p className="mt-0.5 text-xs text-espresso/55">{product.description}</p>}
+          <h3 className="text-sm font-semibold text-espresso">{name}</h3>
+          {description && <p className="mt-0.5 text-xs text-espresso/55">{description}</p>}
         </div>
 
         {product.variantGroups.map((group) => (
           <div key={group.id}>
             <p className="mb-1.5 text-[11px] font-medium tracking-wide text-espresso/50 uppercase">
-              {group.label}
+              {groupLabel(group, catalog)}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {group.options.map((option) => {
@@ -66,7 +80,7 @@ export default function ProductCard({ product, showImages = true }) {
                         : "border-black/10 bg-white text-espresso/70 hover:border-forest/40"
                     }`}
                   >
-                    {option.label}
+                    {optionLabel(option, catalog)}
                     {group.type === "size" && ` — ${formatUSD(option.price)}`}
                   </button>
                 );
@@ -81,7 +95,7 @@ export default function ProductCard({ product, showImages = true }) {
           <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-white px-1 py-1">
             <button
               type="button"
-              aria-label="Decrease quantity"
+              aria-label={t.holiday.product.decrease}
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               className="flex h-6 w-6 items-center justify-center rounded-md text-espresso/70 transition-colors hover:bg-black/5"
             >
@@ -90,7 +104,7 @@ export default function ProductCard({ product, showImages = true }) {
             <span className="w-4 text-center text-sm text-espresso">{quantity}</span>
             <button
               type="button"
-              aria-label="Increase quantity"
+              aria-label={t.holiday.product.increase}
               onClick={() => setQuantity((q) => q + 1)}
               className="flex h-6 w-6 items-center justify-center rounded-md text-espresso/70 transition-colors hover:bg-black/5"
             >
@@ -104,7 +118,7 @@ export default function ProductCard({ product, showImages = true }) {
           onClick={handleAdd}
           className="w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-forest-light"
         >
-          Add to Cart
+          {t.holiday.product.addToCart}
         </button>
       </div>
     </div>

@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
  * Fades + gently rises content into view once it enters the viewport.
  * Respects prefers-reduced-motion by showing content immediately.
  */
-export default function Reveal({ children, className = "", delay = 0, as = "div" }) {
+export default function Reveal({ children, className = "", delay = 0, as = "div", immediate = false }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   const Tag = as;
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || immediate) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setVisible(true);
@@ -29,7 +29,16 @@ export default function Reveal({ children, className = "", delay = 0, as = "div"
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [immediate]);
+
+  // Above the fold: animate with CSS on first paint (see .animate-rise).
+  if (immediate) {
+    return (
+      <Tag style={{ animationDelay: `${delay}ms` }} className={`animate-rise ${className}`}>
+        {children}
+      </Tag>
+    );
+  }
 
   return (
     <Tag

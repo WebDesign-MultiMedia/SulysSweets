@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CreditCard, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useHolidayCart } from "../../context/HolidayCartContext";
-import { formatUSD } from "../../data/holidayMenu";
+import { formatUSD, localizeItem } from "../../data/holidayMenu";
 import { createDemoOrder } from "../../data/demoOrder";
 import { useLanguage } from "../../i18n/LanguageContext";
 import DemoNotice from "./DemoNotice";
@@ -37,6 +37,7 @@ export default function CartDrawer() {
 
   const navigate = useNavigate();
   const { lang, t } = useLanguage();
+  const tc = t.holiday.cart;
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   // Optional and unchecked by default — required for SMS (10DLC) compliance.
@@ -143,12 +144,12 @@ export default function CartDrawer() {
             <div className="flex items-center justify-between border-b border-espresso/10 px-5 py-4">
               <h2 className="flex items-center gap-2 font-display text-xl text-espresso">
                 <ShoppingBag className="h-5 w-5 text-forest" />
-                Your Order
+                {tc.title}
               </h2>
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
-                aria-label="Close cart"
+                aria-label={tc.close}
                 className="flex h-9 w-9 items-center justify-center rounded-full text-espresso transition-colors hover:bg-espresso/10"
               >
                 <X className="h-5 w-5" />
@@ -157,28 +158,30 @@ export default function CartDrawer() {
 
             <div className="flex-1 overflow-y-auto px-5 py-4">
               {items.length === 0 ? (
-                <p className="mt-10 text-center text-sm text-espresso/75">Your cart is empty.</p>
+                <p className="mt-10 text-center text-sm text-espresso/75">{tc.empty}</p>
               ) : (
                 <ul className="flex flex-col gap-4">
-                  {items.map((item) => (
+                  {items.map((item) => {
+                    const display = localizeItem(item, t.holiday.catalog);
+                    return (
                     <li key={item.key} className="flex gap-3 border-b border-espresso/10 pb-4">
                       {item.image && (
                         <img
                           src={item.image}
-                          alt={item.name}
+                          alt={display.name}
                           className="h-16 w-16 flex-shrink-0 rounded-xl object-cover"
                         />
                       )}
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-espresso">{item.name}</p>
-                        {item.selectionLabel && (
-                          <p className="text-xs text-espresso/75">{item.selectionLabel}</p>
+                        <p className="text-sm font-semibold text-espresso">{display.name}</p>
+                        {display.selectionLabel && (
+                          <p className="text-xs text-espresso/75">{display.selectionLabel}</p>
                         )}
                         <div className="mt-2 flex items-center justify-between">
                           <div className="flex items-center gap-2 rounded-full border border-espresso/20 bg-white/60 px-1.5 py-1">
                             <button
                               type="button"
-                              aria-label="Decrease quantity"
+                              aria-label={t.holiday.product.decrease}
                               onClick={() => updateQuantity(item.key, item.quantity - 1)}
                               className="flex h-6 w-6 items-center justify-center rounded-full text-espresso hover:bg-forest/10"
                             >
@@ -187,7 +190,7 @@ export default function CartDrawer() {
                             <span className="w-4 text-center text-sm">{item.quantity}</span>
                             <button
                               type="button"
-                              aria-label="Increase quantity"
+                              aria-label={t.holiday.product.increase}
                               onClick={() => updateQuantity(item.key, item.quantity + 1)}
                               className="flex h-6 w-6 items-center justify-center rounded-full text-espresso hover:bg-forest/10"
                             >
@@ -201,21 +204,22 @@ export default function CartDrawer() {
                       </div>
                       <button
                         type="button"
-                        aria-label={`Remove ${item.name}`}
+                        aria-label={tc.remove(display.name)}
                         onClick={() => removeItem(item.key)}
                         className="h-fit text-espresso/40 transition-colors hover:text-crimson"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
               )}
 
               {items.length > 0 && (
                 <>
                   <div className="mt-6">
-                    <p className={labelClass}>Fulfillment</p>
+                    <p className={labelClass}>{tc.fulfillment}</p>
                     <div className="flex gap-2">
                       <button
                         type="button"
@@ -226,7 +230,7 @@ export default function CartDrawer() {
                             : "border-espresso/20 bg-white/60 text-espresso"
                         }`}
                       >
-                        Pickup (Free)
+                        {tc.pickupFree}
                       </button>
                       <button
                         type="button"
@@ -237,27 +241,23 @@ export default function CartDrawer() {
                             : "border-espresso/20 bg-white/60 text-espresso"
                         }`}
                       >
-                        Delivery
+                        {tc.delivery}
                       </button>
                     </div>
                     <p className="mt-1.5 text-xs text-espresso/75">
-                      {fulfillment === "pickup"
-                        ? "Pelham Bay, Bronx."
-                        : "Delivery fee varies by location (Bronx, Harlem, Dyckman, Queens & Westchester county) — confirmed at pickup/delivery."}
+                      {fulfillment === "pickup" ? tc.pickupNote : tc.deliveryNote}
                     </p>
                     {fulfillment === "delivery" && (
                       <textarea
                         rows={2}
                         value={deliveryAddress}
                         onChange={(e) => setDeliveryAddress(e.target.value)}
-                        placeholder="Delivery address"
+                        placeholder={tc.deliveryAddress}
                         className={`${inputClass} mt-2 resize-none`}
                       />
                     )}
 
-                    <p className={`${labelClass} mt-4`}>
-                      {fulfillment === "pickup" ? "Pickup" : "Delivery"} Date &amp; Time
-                    </p>
+                    <p className={`${labelClass} mt-4`}>{tc.dateTime(fulfillment)}</p>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <input
                         type="date"
@@ -276,24 +276,24 @@ export default function CartDrawer() {
                   </div>
 
                   <div className="mt-5 grid gap-3">
-                    <p className={labelClass}>Contact Info</p>
+                    <p className={labelClass}>{tc.contactInfo}</p>
                     <input
                       type="text"
-                      placeholder="Full name"
+                      placeholder={tc.fullName}
                       value={customer.name}
                       onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
                       className={inputClass}
                     />
                     <input
                       type="email"
-                      placeholder="Email"
+                      placeholder={tc.email}
                       value={customer.email}
                       onChange={(e) => setCustomer((c) => ({ ...c, email: e.target.value }))}
                       className={inputClass}
                     />
                     <input
                       type="tel"
-                      placeholder="Phone"
+                      placeholder={tc.phone}
                       value={customer.phone}
                       onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
                       className={inputClass}
@@ -326,15 +326,15 @@ export default function CartDrawer() {
             {items.length > 0 && (
               <div className="border-t border-espresso/10 bg-white/50 px-5 py-4">
                 <div className="flex justify-between text-sm text-espresso/80">
-                  <span>Total Order Amount</span>
+                  <span>{tc.total}</span>
                   <span className="font-semibold text-espresso">{formatUSD(subtotal)}</span>
                 </div>
                 <div className="mt-1 flex justify-between text-sm text-forest">
-                  <span className="font-semibold">50% Deposit Due Now</span>
+                  <span className="font-semibold">{tc.depositNow}</span>
                   <span className="font-semibold">{formatUSD(depositDue)}</span>
                 </div>
                 <div className="mt-1 flex justify-between text-xs text-espresso/75">
-                  <span>Remaining Balance Due at Pickup</span>
+                  <span>{tc.balance}</span>
                   <span>{formatUSD(remainingBalance)}</span>
                 </div>
 
@@ -344,7 +344,7 @@ export default function CartDrawer() {
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-forest/30 px-6 py-2.5 text-sm font-medium tracking-wide text-forest uppercase transition-colors hover:bg-forest/10"
                 >
                   <ShoppingBag className="h-4 w-4" />
-                  Continue Shopping
+                  {tc.continueShopping}
                 </button>
 
                 <button
@@ -354,7 +354,7 @@ export default function CartDrawer() {
                   className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-medium tracking-wide text-cashmere uppercase transition-colors hover:bg-forest-light disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <CreditCard className="h-4 w-4" />
-                  {checkingOut ? "Redirecting…" : "Pay 50% Deposit with Card"}
+                  {checkingOut ? tc.redirecting : tc.pay}
                 </button>
                 <DemoNotice compact />
                 {checkoutError && (
@@ -363,10 +363,7 @@ export default function CartDrawer() {
                   </p>
                 )}
                 {!canCheckout && (
-                  <p className="mt-2 text-center text-xs text-espresso/70">
-                    Fill in your name, email, phone, {fulfillment === "delivery" ? "delivery address, " : ""}
-                    and a {fulfillment} date &amp; time to continue.
-                  </p>
+                  <p className="mt-2 text-center text-xs text-espresso/70">{tc.fillIn(fulfillment)}</p>
                 )}
               </div>
             )}

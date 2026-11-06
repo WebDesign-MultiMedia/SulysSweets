@@ -50,8 +50,9 @@ export async function sendSmsReceipt(order, origin) {
   }
 
   const link = `${origin}/holiday-order/success?session_id=${order.sessionId}`;
-  const scheduled = formatScheduled(order.scheduledDate, order.scheduledTime);
-  const body = translations[order.lang === "es" ? "es" : "en"].sms.receipt({ ...order, scheduled, link });
+  const t = translations[order.lang === "es" ? "es" : "en"];
+  const scheduled = formatScheduled(order.scheduledDate, order.scheduledTime, t.holiday.locale);
+  const body = t.sms.receipt({ ...order, scheduled, link });
 
   const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
   await client.messages.create({ from: TWILIO_FROM_NUMBER, to: toE164(order.customer.phone), body });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Mail, MessageSquare, Printer } from "lucide-react";
-import { formatUSD, formatScheduled } from "../data/holidayMenu";
+import { formatUSD, formatScheduled, localizeItem } from "../data/holidayMenu";
 import { clearStoredCart } from "../context/HolidayCartContext";
 import { getDemoOrder, isDemoSessionId } from "../data/demoOrder";
 import Snowfall from "../components/holiday/Snowfall";
@@ -14,7 +14,7 @@ function useOrder(sessionId) {
 
   useEffect(() => {
     if (!sessionId) {
-      setState({ loading: false, error: "Missing order reference.", order: null });
+      setState({ loading: false, error: "missingRef", order: null });
       return;
     }
 
@@ -24,7 +24,7 @@ function useOrder(sessionId) {
       setState(
         order
           ? { loading: false, error: "", order }
-          : { loading: false, error: "This demo order has expired.", order: null },
+          : { loading: false, error: "demoExpired", order: null },
       );
       return;
     }
@@ -37,9 +37,9 @@ function useOrder(sessionId) {
         try {
           data = await res.json();
         } catch {
-          throw new Error("The order service is unavailable right now.");
+          throw new Error("serviceDown");
         }
-        if (!res.ok) throw new Error("Couldn't load your order.");
+        if (!res.ok) throw new Error("loadFailed");
         if (!cancelled) {
           clearStoredCart();
           setState({ loading: false, error: "", order: data });
@@ -128,6 +128,8 @@ export default function HolidayOrderSuccess() {
   const { loading, error, order } = useOrder(sessionId);
 
   const { t } = useLanguage();
+  const ts = t.holiday.success;
+  const locale = t.holiday.locale;
   const email = useResend(order, sessionId, "/api/send-email", t);
   const sms = useResend(order, sessionId, "/api/send-sms", t);
 
@@ -154,95 +156,96 @@ export default function HolidayOrderSuccess() {
             className="flex items-center gap-1.5 text-sm text-cashmere/85 transition-colors hover:text-gold-light"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Holiday Menu
+            {t.holiday.nav.backToMenu}
           </Link>
         </div>
       </header>
       {order?.isDemo && <DemoNotice />}
 
       <div className="relative mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
-        {loading && <p className="text-center text-cashmere/80">Loading your order…</p>}
-        {error && <p className="text-center text-red-300">{error}</p>}
+        {loading && <p className="text-center text-cashmere/80">{ts.loading}</p>}
+        {error && <p className="text-center text-red-300">{ts[error] || ts.loadFailed}</p>}
 
         {order && (
           <div className="print-area rounded-3xl border border-gold/30 bg-white/90 p-6 shadow-[0_10px_30px_-12px_rgba(30,58,43,0.3)] sm:p-9">
             <div className="text-center">
-              <p className="font-holiday-script text-4xl text-forest">Thank You!</p>
+              <p className="font-holiday-script text-4xl text-forest">{ts.thankYou}</p>
               <p className="mt-2 text-sm text-espresso/70">
-                {order.isDemo
-                  ? "This is a demo checkout — no real charge was made."
-                  : "Your deposit was received — order confirmed."}
+                {order.isDemo ? ts.demoCheckout : ts.confirmed}
               </p>
               <p className="mt-1 text-xs text-espresso/70">{receiptLine}</p>
             </div>
 
             <div className="mt-6 flex flex-wrap justify-between gap-2 border-y border-espresso/10 py-4 text-sm">
               <div>
-                <p className="text-xs font-semibold tracking-wide text-forest uppercase">Order #</p>
+                <p className="text-xs font-semibold tracking-wide text-forest uppercase">{ts.orderNumber}</p>
                 <p className="text-espresso">{order.orderId}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold tracking-wide text-forest uppercase">Order Date</p>
-                <p className="text-espresso">{new Date(order.date).toLocaleDateString("en-US", { dateStyle: "long" })}</p>
+                <p className="text-xs font-semibold tracking-wide text-forest uppercase">{ts.orderDate}</p>
+                <p className="text-espresso">{new Date(order.date).toLocaleDateString(locale, { dateStyle: "long" })}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold tracking-wide text-forest uppercase">Fulfillment</p>
-                <p className="text-espresso capitalize">{order.fulfillment}</p>
+                <p className="text-xs font-semibold tracking-wide text-forest uppercase">{ts.fulfillment}</p>
+                <p className="text-espresso">{ts.fulfillmentType[order.fulfillment] || order.fulfillment}</p>
               </div>
             </div>
 
             <div className="mt-4 flex flex-col items-center gap-1 text-center text-sm text-espresso/80 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-1">
               <p className="min-w-0 break-words">
-                <span className="font-semibold text-espresso">Name:</span> {order.customer.name}
+                <span className="font-semibold text-espresso">{ts.name}</span> {order.customer.name}
               </p>
               <p className="min-w-0 break-words">
-                <span className="font-semibold text-espresso">Phone:</span> {order.customer.phone}
+                <span className="font-semibold text-espresso">{ts.phone}</span> {order.customer.phone}
               </p>
               <p className="min-w-0 break-words">
-                <span className="font-semibold text-espresso">Email:</span> {order.customer.email}
+                <span className="font-semibold text-espresso">{ts.email}</span> {order.customer.email}
               </p>
             </div>
 
             {order.fulfillment === "delivery" && order.deliveryAddress && (
               <p className="mt-3 text-sm text-espresso/80">
-                <span className="font-semibold">Delivery address:</span> {order.deliveryAddress}
+                <span className="font-semibold">{ts.deliveryAddress}</span> {order.deliveryAddress}
               </p>
             )}
             {order.fulfillment === "pickup" && (
-              <p className="mt-3 text-sm text-espresso/80">Pick Up Location: Pelham Bay (Bronx)</p>
+              <p className="mt-3 text-sm text-espresso/80">{ts.pickupLocation}</p>
             )}
             {order.scheduledDate && order.scheduledTime && (
               <p className="mt-1 text-sm text-espresso/80">
-                <span className="font-semibold capitalize">{order.fulfillment} time:</span>{" "}
-                {formatScheduled(order.scheduledDate, order.scheduledTime)}
+                <span className="font-semibold">{ts.time(order.fulfillment)}</span>{" "}
+                {formatScheduled(order.scheduledDate, order.scheduledTime, locale)}
               </p>
             )}
 
             <ul className="mt-5 flex flex-col gap-3">
-              {order.items.map((item, i) => (
-                <li key={i} className="flex justify-between gap-4 border-b border-espresso/10 pb-3 text-sm">
-                  <div>
-                    <p className="font-semibold text-espresso">
-                      {item.quantity}× {item.name}
-                    </p>
-                    {item.selectionLabel && <p className="text-xs text-espresso/75">{item.selectionLabel}</p>}
-                  </div>
-                  <span className="whitespace-nowrap text-espresso">{formatUSD(item.unitPrice * item.quantity)}</span>
-                </li>
-              ))}
+              {order.items.map((item, i) => {
+                const display = localizeItem(item, t.holiday.catalog);
+                return (
+                  <li key={i} className="flex justify-between gap-4 border-b border-espresso/10 pb-3 text-sm">
+                    <div>
+                      <p className="font-semibold text-espresso">
+                        {item.quantity}× {display.name}
+                      </p>
+                      {display.selectionLabel && <p className="text-xs text-espresso/75">{display.selectionLabel}</p>}
+                    </div>
+                    <span className="whitespace-nowrap text-espresso">{formatUSD(item.unitPrice * item.quantity)}</span>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="mt-5 space-y-1.5 text-sm">
               <div className="flex justify-between text-espresso/80">
-                <span>Total Order Amount</span>
+                <span>{ts.total}</span>
                 <span className="font-semibold text-espresso">{formatUSD(order.subtotal)}</span>
               </div>
               <div className="flex justify-between font-semibold text-forest">
-                <span>Deposit Amount Paid Today</span>
+                <span>{ts.depositPaid}</span>
                 <span>{formatUSD(order.depositPaid)}</span>
               </div>
               <div className="flex justify-between text-espresso/75">
-                <span>Remaining Balance Due at Pickup</span>
+                <span>{ts.balance}</span>
                 <span>{formatUSD(order.remainingBalance)}</span>
               </div>
             </div>
@@ -254,7 +257,7 @@ export default function HolidayOrderSuccess() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-full bg-forest px-4 py-2.5 text-sm font-medium text-cashmere transition-transform hover:-translate-y-0.5"
               >
                 <Printer className="h-4 w-4" />
-                Print Invoice
+                {ts.print}
               </button>
               <ActionButton
                 icon={Mail}
@@ -287,7 +290,7 @@ export default function HolidayOrderSuccess() {
 
         {order && (
           <p className="no-print mt-8 text-center font-holiday-script text-2xl text-cashmere drop-shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
-            Happy Holidays from Suly&apos;s Sweets ♡
+            {ts.happyHolidays}
           </p>
         )}
       </div>

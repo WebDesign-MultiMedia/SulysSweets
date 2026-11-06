@@ -13,7 +13,7 @@ export default function HolidayFooter() {
         <p className="font-display text-xl">Suly&apos;s Sweets</p>
 
         <Link to="/" className="text-sm text-cashmere/80 transition-colors hover:text-gold-light">
-          ← Back to Main Site
+          {t.holiday.nav.backToSite}
         </Link>
 
         <a

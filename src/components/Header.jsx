@@ -80,7 +80,7 @@ export default function Header({ activePage, onNavigate }) {
               }`}
             >
               <img
-                src="/logo.png"
+                src="/logo-256.png"
                 alt="Suly's Sweets logo"
                 width={40}
                 height={40}
