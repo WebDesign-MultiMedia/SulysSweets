@@ -63,6 +63,35 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 
 ---
 
+## Challenges & decisions
+
+**1. Stopping duplicate and spam receipts**
+- *Problem:* Stripe may deliver the same webhook event more than once, and customers can keep pressing "Resend". That could text a customer five times or let someone use the endpoint to spam a phone number.
+- *Approach:* receipt state lives on the Stripe session itself. Before a send, the server writes the new count and timestamp (reserving the slot), then sends, and rolls the reservation back if the provider fails. Resends need a paid order, a valid session ID, and (for SMS) recorded consent.
+- *Result:* at most 2 sends per channel per order (the automatic one counts), a 60-second cooldown, and a retry after a failure never double-sends. No extra infrastructure was needed.
+
+**2. No database, on purpose**
+- *Decision:* the Stripe Checkout session *is* the order record. Items, schedule, contact info, consent and receipt state are all stored in its metadata.
+- *Trade-off:* orders can't be searched outside the Stripe Dashboard. In exchange there is nothing extra to host, pay for, back up or secure. For a one-person bakery that's the right call. A database can be added later without changing the checkout flow.
+
+**3. Never trusting prices from the browser**
+- *Problem:* anything in the cart can be edited in DevTools.
+- *Approach:* the browser sends only product IDs, options and quantities. `/api/checkout` looks up every price in the server's own menu, caps quantities, and rejects unknown products before creating the Stripe session.
+
+**4. A demo that never hides real failures**
+- *Problem:* the site needs to be a clickable demo without live keys, but an earlier version showed a fake "Thank you!" page whenever checkout failed for *any* reason. A real customer could think they'd ordered when they hadn't.
+- *Approach:* `/api/status` reports `live` or `demo`. The browser falls back to the demo only when checkout isn't configured or the API is unreachable. Real errors (bad input, Stripe declining) show a translated error message instead.
+
+**5. SMS compliance (TCPA / A2P 10DLC)**
+- *Problem:* US carriers block business numbers that text without clear consent.
+- *Approach:* an optional, unchecked opt-in that links to the Privacy Policy and Terms. The server stores the consent flag, its timestamps, the policy version and the language with the order. Texts are only sent with consent and always include STOP/HELP. `/privacy` and `/terms` are bilingual and written to support carrier registration.
+
+**6. Fitting big orders into Stripe metadata**
+- *Problem:* Stripe allows only 500 characters per metadata value, so a large cart overflowed and checkout failed.
+- *Approach:* the items are serialized and split across `items`, `items_1`, `items_2`, … and reassembled when the order is read back. A size limit returns a clear "cart too large" error instead of a crash.
+
+---
+
 ## Tech stack
 
 | Area | Tools |
