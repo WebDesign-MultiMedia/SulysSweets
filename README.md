@@ -1,5 +1,10 @@
 # Suly's Sweets — Bakery Website & Holiday Ordering App
 
+[![CI](https://github.com/WebDesign-MultiMedia/SulysSweets/actions/workflows/ci.yml/badge.svg)](https://github.com/WebDesign-MultiMedia/SulysSweets/actions/workflows/ci.yml)
+![Lighthouse accessibility 100](https://img.shields.io/badge/Lighthouse%20accessibility-100-brightgreen)
+![Lighthouse desktop performance 98](https://img.shields.io/badge/Lighthouse%20performance%20(desktop)-98-brightgreen)
+![Tests 42 passing](https://img.shields.io/badge/tests-42%20passing-brightgreen)
+
 **Live site:** https://sulys-sweets.vercel.app
 
 A production-style, bilingual (English / Español) website for **Suly's Sweets**, a home bakery in Pelham Bay, Bronx, NY that makes custom cakes, cupcakes, chocolate-covered strawberries and dessert tables. It is a real client project. It has a marketing site and a full **holiday pre-order web app** with a cart, Stripe Checkout (50% deposit), and automatic email and SMS receipts.
@@ -14,9 +19,9 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 | --- | --- | --- |
 | ![Holiday ordering page with demo-mode banner](docs/screenshots/holiday-menu-desktop.jpg) | ![Cart drawer with pickup scheduling, contact info and SMS consent](docs/screenshots/cart-desktop.jpg) | ![Order confirmation with receipt and resend buttons](docs/screenshots/confirmation-desktop.jpg) |
 
-| Menu | Gallery |
-| --- | --- |
-| ![Menu section with starting prices](docs/screenshots/menu-desktop.jpg) | ![Gallery of past cakes](docs/screenshots/gallery-desktop.jpg) |
+| Menu | Gallery | Confirmation in Spanish |
+| --- | --- | --- |
+| ![Menu section with starting prices](docs/screenshots/menu-desktop.jpg) | ![Gallery of past cakes](docs/screenshots/gallery-desktop.jpg) | ![Order confirmation in Spanish](docs/screenshots/confirmation-spanish.jpg) |
 
 <p align="center">
   <img src="docs/screenshots/home-mobile.jpg" alt="Home page on a phone" width="260" />
@@ -29,7 +34,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ## What to try (2-minute tour)
 
 1. **Home page** (`/`): animated hero, gallery with a lightbox, the menu with prices, an Instagram section and a contact form.
-2. **Language toggle:** switch between English and Spanish. The main site, cart, errors, legal pages and SMS text are all translated.
+2. **Language toggle:** switch between English and Spanish (on the home page or the holiday menu). Every page, the cart, product names, errors, legal pages and the SMS receipt are translated.
 3. **Holiday menu** (`/holiday-order`): add items to the cart, choose pickup or delivery, pick a date and time, and opt in to text updates.
 4. **Checkout:** in demo mode you land on the order confirmation page with a sample receipt, "Resend email" and "Resend text" buttons.
 5. **Legal pages:** `/privacy` and `/terms`. These are the pages needed for SMS (A2P 10DLC) carrier registration.
@@ -39,7 +44,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ## Features
 
 ### Customer experience
-- **Bilingual EN/ES** with a toggle that is remembered across pages. All copy lives in one translation file.
+- **Bilingual EN/ES** with a toggle that is remembered across pages. All copy lives in one translation file, and a test fails if any English text is missing its Spanish version.
 - **Modern, animated UI:** Vanta.js 3D backgrounds (lazy-loaded), Framer Motion scroll reveals, a scrolling marquee, a holiday theme with snowfall and a garland.
 - **Responsive from 360px phones to wide desktops**, with reduced-motion support.
 - **Gallery and lightbox** with zoomable product photos.
@@ -49,7 +54,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ### Payments & messaging (serverless backend)
 - **Stripe Checkout:** the server re-prices every cart item from its own price list, so nobody can change prices in the browser.
 - **Stripe webhook** with signature verification sends receipts once the payment is confirmed.
-- **Email receipts** through Resend and **SMS receipts** through Twilio, in the customer's language.
+- **Email receipts** through Resend and **SMS receipts** through Twilio (the SMS is sent in the customer's language).
 - **Duplicate-proof receipts:** the send count and timestamps are stored on the Stripe session. Each channel is limited to 2 sends with a 60-second cooldown, and a send that fails is rolled back.
 - **SMS consent (TCPA / 10DLC):** an optional, unchecked opt-in checkbox. The consent, its timestamp, the policy version and the language are saved with the order. Texts are never sent without consent and always include STOP/HELP.
 - **Large-cart support:** order items are split across Stripe's 500-character metadata limit.
@@ -59,7 +64,9 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 ### Security & quality
 - Security headers set in `vercel.json` (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`).
 - No secrets in the repo; every key is an environment variable (see `.env.example`).
-- **GitHub Actions CI** on every push: clean install, syntax check of every API function, production build, and `npm audit` for high-severity issues.
+- **42 automated tests** (Vitest) covering pricing, validation, SMS consent, receipt rate limiting and rollback, metadata chunking, and translation completeness. Stripe, Resend and Twilio are mocked, so tests never call real services.
+- **GitHub Actions CI** on every push: clean install, syntax check of every API function, tests, production build, and `npm audit` for high-severity issues.
+- **Lighthouse:** 100 accessibility, best practices and SEO on mobile and desktop; performance 98 on desktop and about 80 on mobile (see below).
 
 ---
 
@@ -76,7 +83,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 
 **3. Never trusting prices from the browser**
 - *Problem:* anything in the cart can be edited in DevTools.
-- *Approach:* the browser sends only product IDs, options and quantities. `/api/checkout` looks up every price in the server's own menu, caps quantities, and rejects unknown products before creating the Stripe session.
+- *Approach:* `/api/checkout` ignores any price the browser sends. It uses only the product IDs, options and quantities, looks up every price in the server's own menu, caps quantities, and rejects unknown products or options before creating the Stripe session.
 
 **4. A demo that never hides real failures**
 - *Problem:* the site needs to be a clickable demo without live keys, but an earlier version showed a fake "Thank you!" page whenever checkout failed for *any* reason. A real customer could think they'd ordered when they hadn't.
@@ -89,6 +96,41 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 **6. Fitting big orders into Stripe metadata**
 - *Problem:* Stripe allows only 500 characters per metadata value, so a large cart overflowed and checkout failed.
 - *Approach:* the items are serialized and split across `items`, `items_1`, `items_2`, … and reassembled when the order is read back. A size limit returns a clear "cart too large" error instead of a crash.
+
+**7. A $0 bug that the tests caught**
+- *Problem:* while writing tests for checkout pricing, a test that sent a made-up size (for example `size: "fake"`) came back priced at **$0**. Next to a real item, that item would have been free.
+- *Approach:* `/api/checkout` now rejects any option that isn't on the menu. The test that found it stays in the suite, and it fails against the old code.
+
+**8. Making the phone version fast**
+- *Problem:* Lighthouse mobile scored 71, with the main content taking about 10 seconds to appear on a simulated phone connection. The page was downloading about 5 MB of images up front: a 941 KB logo shown at 40 px, and every cake photo, including ones in sections hidden on phones (browsers still fetch lazy images inside hidden sections).
+- *Approach:* phone sections are only put on the page once visited; the About slideshow keeps 3 slides on the page instead of 11; logos are resized (941 KB → 32 KB) and the hero photos converted to WebP (319 KB → 40 KB); the three.js background starts after the page has loaded; and the hero uses a CSS entrance animation so it paints on the first frame instead of waiting for JavaScript.
+- *Result:* mobile performance went from about 71 to about 80–85, and the first load on phones fetches 3 images instead of about 14. Accessibility went from 95 to 100 after raising footer text contrast and fixing the language toggle's accessible name.
+
+---
+
+## Lighthouse scores
+
+Measured on the live site with Lighthouse 12 (home page). Mobile numbers vary a few points between runs.
+
+| | Performance | Accessibility | Best practices | SEO |
+| --- | --- | --- | --- | --- |
+| Desktop | 98 | 100 | 100 | 100 |
+| Mobile (simulated slow 4G) | ~80 (78–85) | 100 | 100 | 100 |
+
+What still limits mobile performance: the site is a single-page React app, so content appears only after the JavaScript loads, and the remaining cake photos are large PNGs. Pre-rendering the home page and converting the rest of the photos to WebP would be the next steps.
+
+## Tests
+
+```bash
+npm test
+```
+
+| File | What it checks |
+| --- | --- |
+| `tests/checkout.test.js` | Server-side pricing, 50% deposit, ignoring browser prices, quantity cap, unknown products and options, input validation, demo-mode response, SMS consent recording |
+| `tests/resendReceipt.test.js` | Unpaid orders, no-consent SMS, 2-send limit, 60-second cooldown, reserve-then-send, rollback on provider failure, E.164 phone format and STOP/HELP wording |
+| `tests/stripeOrder.test.js` | Splitting items across 500-character metadata values and reading them back, session ID validation, consent parsing |
+| `tests/i18n.test.js` | English and Spanish have the same keys, every product has a Spanish name, Spanish date formatting |
 
 ---
 
@@ -104,6 +146,7 @@ A production-style, bilingual (English / Español) website for **Suly's Sweets**
 | Email | Resend |
 | SMS | Twilio |
 | i18n | Custom React context + translation dictionary (EN/ES) |
+| Testing | Vitest (with mocked Stripe, Resend and Twilio), Lighthouse |
 | Hosting & CI/CD | Vercel (auto-deploys from `main`), GitHub Actions |
 
 ---
@@ -142,6 +185,7 @@ src/
   i18n/              Language context + all EN/ES translations
   data/              Menu, holiday products, gallery, demo order
 public/              Images and logo
+tests/               Vitest test suite
 .github/workflows/   CI pipeline
 ```
 
@@ -153,6 +197,7 @@ public/              Images and logo
 npm install
 npm run dev        # front end at http://localhost:5173 (checkout falls back to demo mode)
 npm run build      # production build
+npm test           # run the test suite
 ```
 
 To run the `/api` functions locally as well, use the Vercel CLI:
