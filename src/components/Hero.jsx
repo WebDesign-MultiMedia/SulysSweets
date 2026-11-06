@@ -78,10 +78,10 @@ export default function Hero({ onNavigate }) {
 
           <div className="animate-float absolute -bottom-6 -left-4 w-28 rounded-3xl bg-cream/90 p-2 ring-1 ring-white/70 shadow-[0_20px_35px_-18px_rgba(61,43,57,0.45)] backdrop-blur-sm sm:-left-10 sm:w-32">
             <img
-              src="/SlideShow/chocolateCoveredStrawberries.png"
-              alt="Chocolate covered strawberries by Suly's Sweets"
-              width={506}
-              height={900}
+              src="/hero-strawberry-cake.png"
+              alt="Fresh strawberry cake by Suly's Sweets"
+              width={288}
+              height={288}
               loading="lazy"
               className="cutout-shadow aspect-square w-full object-contain"
             />
