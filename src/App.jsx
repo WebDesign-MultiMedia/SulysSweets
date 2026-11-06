@@ -5,6 +5,8 @@ import ScrollToTop from "./components/ScrollToTop";
 const Home = lazy(() => import("./pages/Home"));
 const HolidayOrder = lazy(() => import("./pages/HolidayOrder"));
 const HolidayOrderSuccess = lazy(() => import("./pages/HolidayOrderSuccess"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 
 export default function App() {
   return (
@@ -14,6 +16,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/holiday-order" element={<HolidayOrder />} />
         <Route path="/holiday-order/success" element={<HolidayOrderSuccess />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </Suspense>
   );

@@ -28,6 +28,15 @@ export default function HolidayFooter() {
 
         <p className="font-display text-lg text-gold-light italic">{thankYouNote}</p>
 
+        <div className="flex gap-5 text-xs">
+          <Link to="/privacy" className="text-cashmere/70 transition-colors hover:text-gold-light">
+            {t.footer.privacy}
+          </Link>
+          <Link to="/terms" className="text-cashmere/70 transition-colors hover:text-gold-light">
+            {t.footer.terms}
+          </Link>
+        </div>
+
         <p className="text-xs text-cashmere/50">{t.footer.copyright(new Date().getFullYear())}</p>
       </div>
     </footer>

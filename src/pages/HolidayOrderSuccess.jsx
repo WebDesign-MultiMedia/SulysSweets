@@ -6,6 +6,7 @@ import { clearStoredCart } from "../context/HolidayCartContext";
 import { getDemoOrder, isDemoSessionId } from "../data/demoOrder";
 import Snowfall from "../components/holiday/Snowfall";
 import HolidayVantaBackground from "../components/holiday/HolidayVantaBackground";
+import { useLanguage } from "../i18n/LanguageContext";
 
 function useOrder(sessionId) {
   const [state, setState] = useState({ loading: true, error: "", order: null });
@@ -37,7 +38,7 @@ function useOrder(sessionId) {
         } catch {
           throw new Error("The order service is unavailable right now.");
         }
-        if (!res.ok) throw new Error(data.error || "Couldn't load your order.");
+        if (!res.ok) throw new Error("Couldn't load your order.");
         if (!cancelled) {
           clearStoredCart();
           setState({ loading: false, error: "", order: data });
@@ -55,13 +56,63 @@ function useOrder(sessionId) {
   return state;
 }
 
-function ActionButton({ icon: Icon, label, status, onClick }) {
-  const text = { idle: label, sending: "Sending…", sent: "Sent!", error: "Try again" }[status];
+// Error codes after which retrying can't succeed — the button stays disabled.
+const FINAL_ERRORS = new Set(["limit_reached", "not_paid", "no_consent", "not_found"]);
+
+function useResend(order, sessionId, endpoint, t) {
+  const [status, setStatus] = useState("idle");
+  const [message, setMessage] = useState("");
+  const [locked, setLocked] = useState(false);
+
+  const send = async () => {
+    if (!order) return;
+    setStatus("sending");
+    setMessage("");
+    if (order.isDemo) {
+      setTimeout(() => setStatus("sent"), 700);
+      return;
+    }
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        // fall through to the generic message
+      }
+      if (res.ok) {
+        setStatus("sent");
+        if (data.remaining === 0) setLocked(true);
+        return;
+      }
+      const code = data.error;
+      setStatus("error");
+      if (FINAL_ERRORS.has(code)) setLocked(true);
+      setMessage(
+        code === "cooldown"
+          ? t.success.errors.cooldown(data.retryAfter || 60)
+          : t.success.errors[code] || t.success.errors.send_failed,
+      );
+    } catch {
+      setStatus("error");
+      setMessage(t.success.errors.send_failed);
+    }
+  };
+
+  return { status, message, locked, send };
+}
+
+function ActionButton({ icon: Icon, label, status, locked, onClick, t }) {
+  const text = { idle: label, sending: t.success.sending, sent: t.success.sent, error: t.success.tryAgain }[status];
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={status === "sending"}
+      disabled={status === "sending" || locked}
       className="no-print flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/30 bg-white px-4 py-2.5 text-sm font-medium text-forest transition-colors hover:bg-forest hover:text-cashmere disabled:cursor-not-allowed disabled:opacity-60"
     >
       <Icon className="h-4 w-4" />
@@ -75,48 +126,20 @@ export default function HolidayOrderSuccess() {
   const sessionId = searchParams.get("session_id");
   const { loading, error, order } = useOrder(sessionId);
 
-  const [emailStatus, setEmailStatus] = useState("idle");
-  const [smsStatus, setSmsStatus] = useState("idle");
+  const { t } = useLanguage();
+  const email = useResend(order, sessionId, "/api/send-email", t);
+  const sms = useResend(order, sessionId, "/api/send-sms", t);
 
-  const sendEmail = async () => {
-    if (!order) return;
-    setEmailStatus("sending");
-    if (order.isDemo) {
-      setTimeout(() => setEmailStatus("sent"), 700);
-      return;
-    }
-    try {
-      const res = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
-      });
-      if (!res.ok) throw new Error();
-      setEmailStatus("sent");
-    } catch {
-      setEmailStatus("error");
-    }
-  };
-
-  const sendSms = async () => {
-    if (!order) return;
-    setSmsStatus("sending");
-    if (order.isDemo) {
-      setTimeout(() => setSmsStatus("sent"), 700);
-      return;
-    }
-    try {
-      const res = await fetch("/api/send-sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
-      });
-      if (!res.ok) throw new Error();
-      setSmsStatus("sent");
-    } catch {
-      setSmsStatus("error");
-    }
-  };
+  const emailSent = Boolean(order?.receipts?.email?.sent);
+  const smsSent = Boolean(order?.receipts?.sms?.sent);
+  const receiptLine = order?.isDemo
+    ? t.success.demoNote
+    : emailSent && smsSent
+      ? t.success.receiptSentBoth
+      : emailSent
+        ? t.success.receiptSentEmail
+        : t.success.receiptPending;
+  const actionMessage = [email.message, sms.message].filter(Boolean);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -148,11 +171,7 @@ export default function HolidayOrderSuccess() {
                   ? "This is a demo checkout — no real charge was made."
                   : "Your deposit was received — order confirmed."}
               </p>
-              <p className="mt-1 text-xs text-espresso/70">
-                {order.isDemo
-                  ? "Try the buttons below to preview the email and text receipt."
-                  : "A receipt was automatically emailed and texted to you."}
-              </p>
+              <p className="mt-1 text-xs text-espresso/70">{receiptLine}</p>
             </div>
 
             <div className="mt-6 flex flex-wrap justify-between gap-2 border-y border-espresso/10 py-4 text-sm">
@@ -235,9 +254,32 @@ export default function HolidayOrderSuccess() {
                 <Printer className="h-4 w-4" />
                 Print Invoice
               </button>
-              <ActionButton icon={Mail} label="Resend Email" status={emailStatus} onClick={sendEmail} />
-              <ActionButton icon={MessageSquare} label="Resend Text" status={smsStatus} onClick={sendSms} />
+              <ActionButton
+                icon={Mail}
+                label={t.success.resendEmail}
+                status={email.status}
+                locked={email.locked}
+                onClick={email.send}
+                t={t}
+              />
+              {order.smsConsent && (
+                <ActionButton
+                  icon={MessageSquare}
+                  label={t.success.resendText}
+                  status={sms.status}
+                  locked={sms.locked}
+                  onClick={sms.send}
+                  t={t}
+                />
+              )}
             </div>
+            {actionMessage.length > 0 && (
+              <div role="status" className="no-print mt-3 space-y-1 text-center text-xs text-crimson">
+                {actionMessage.map((m) => (
+                  <p key={m}>{m}</p>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

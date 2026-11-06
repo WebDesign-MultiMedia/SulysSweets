@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CreditCard, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useHolidayCart } from "../../context/HolidayCartContext";
 import { formatUSD } from "../../data/holidayMenu";
 import { createDemoOrder } from "../../data/demoOrder";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const inputClass =
   "w-full rounded-xl border border-espresso/20 bg-white/80 px-3.5 py-2.5 text-sm text-espresso placeholder:text-espresso/40 outline-none transition-colors focus:border-forest";
@@ -34,7 +35,17 @@ export default function CartDrawer() {
   } = useHolidayCart();
 
   const navigate = useNavigate();
+  const { lang, t } = useLanguage();
   const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
+  // Optional and unchecked by default — required for SMS (10DLC) compliance.
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [smsConsentAt, setSmsConsentAt] = useState("");
+
+  const toggleSmsConsent = (checked) => {
+    setSmsConsent(checked);
+    setSmsConsentAt(checked ? new Date().toISOString() : "");
+  };
 
   const canCheckout =
     items.length > 0 &&
@@ -45,9 +56,10 @@ export default function CartDrawer() {
     scheduledTime &&
     (fulfillment === "pickup" || deliveryAddress.trim());
 
-  // No Stripe keys configured yet — simulate a successful checkout so the
-  // storefront can be demoed end-to-end. Once /api/checkout succeeds for
-  // real (keys added), this fallback is never reached.
+  // No backend or no Stripe keys configured yet — simulate a successful
+  // checkout so the storefront can be demoed end-to-end. Real checkout
+  // errors (bad input, Stripe failures) are shown instead, so a customer is
+  // never shown a fake "order confirmed" page.
   const runDemoCheckout = () => {
     const order = createDemoOrder({
       items,
@@ -59,14 +71,18 @@ export default function CartDrawer() {
       subtotal,
       depositDue,
       remainingBalance,
+      smsConsent,
     });
     navigate(`/holiday-order/success?session_id=${order.sessionId}`);
   };
 
   const handleCheckout = async () => {
     setCheckingOut(true);
+    setCheckoutError("");
+
+    let res;
     try {
-      const res = await fetch("/api/checkout", {
+      res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,24 +92,32 @@ export default function CartDrawer() {
           deliveryAddress: fulfillment === "delivery" ? deliveryAddress : "",
           scheduledDate,
           scheduledTime,
-          subtotal,
-          depositDue,
+          smsConsent,
+          smsConsentAt: smsConsent ? smsConsentAt : "",
+          lang,
         }),
       });
-
-      let data = null;
-      try {
-        data = await res.json();
-      } catch {
-        // No JSON body — no backend available at all (e.g. local dev).
-      }
-
-      if (!res.ok || !data?.url) return runDemoCheckout();
-
-      window.location.href = data.url;
     } catch {
-      runDemoCheckout();
+      // Network error — no backend reachable at all.
+      return runDemoCheckout();
     }
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {
+      // No JSON body — no backend available (e.g. plain `vite` dev server).
+    }
+
+    if (res.ok && data?.url) {
+      window.location.href = data.url;
+      return;
+    }
+
+    if (!data || res.status === 404 || data.error === "not_configured") return runDemoCheckout();
+
+    setCheckoutError(t.cart.errors[data.error] || t.cart.errors.checkout_failed);
+    setCheckingOut(false);
   };
 
   return createPortal(
@@ -273,6 +297,26 @@ export default function CartDrawer() {
                       onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
                       className={inputClass}
                     />
+                    <label className="flex items-start gap-2.5 text-xs leading-relaxed text-espresso/80">
+                      <input
+                        type="checkbox"
+                        checked={smsConsent}
+                        onChange={(e) => toggleSmsConsent(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 flex-shrink-0 accent-forest"
+                      />
+                      <span>
+                        {t.cart.smsConsent.before}
+                        <Link to="/privacy" target="_blank" rel="noopener" className="text-forest underline">
+                          {t.cart.smsConsent.privacy}
+                        </Link>
+                        {t.cart.smsConsent.and}
+                        <Link to="/terms" target="_blank" rel="noopener" className="text-forest underline">
+                          {t.cart.smsConsent.terms}
+                        </Link>
+                        {t.cart.smsConsent.after}{" "}
+                        <span className="text-espresso/55">{t.cart.smsConsent.optional}</span>
+                      </span>
+                    </label>
                   </div>
                 </>
               )}
@@ -311,6 +355,11 @@ export default function CartDrawer() {
                   <CreditCard className="h-4 w-4" />
                   {checkingOut ? "Redirecting…" : "Pay 50% Deposit with Card"}
                 </button>
+                {checkoutError && (
+                  <p role="alert" className="mt-2 text-center text-xs font-medium text-crimson">
+                    {checkoutError}
+                  </p>
+                )}
                 {!canCheckout && (
                   <p className="mt-2 text-center text-xs text-espresso/70">
                     Fill in your name, email, phone, {fulfillment === "delivery" ? "delivery address, " : ""}

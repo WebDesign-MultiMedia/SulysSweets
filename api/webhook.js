@@ -1,9 +1,12 @@
 import { getStripe, reconstructOrder } from "./_lib/stripeOrder.js";
-import { sendEmailReceipt, sendSmsReceipt } from "./_lib/sendReceipts.js";
+import { canText, sendEmailReceipt, sendSmsReceipt } from "./_lib/sendReceipts.js";
+import { getReceiptState, sendWithReservation } from "./_lib/receiptState.js";
 
 // Stripe requires the raw, unparsed request body to verify the webhook
 // signature — this opts the function out of Vercel's default JSON parsing.
 export const config = { api: { bodyParser: false } };
+
+const PAID_EVENTS = new Set(["checkout.session.completed", "checkout.session.async_payment_succeeded"]);
 
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -12,6 +15,20 @@ function readRawBody(req) {
     req.on("end", () => resolve(Buffer.concat(chunks)));
     req.on("error", reject);
   });
+}
+
+// Sends one channel's receipt unless it was already sent for this order
+// (Stripe can deliver the same event more than once).
+async function sendOnce(session, channel, send) {
+  if (getReceiptState(session, channel).sent) {
+    console.log(`Skipping ${channel} receipt for ${session.id}: already sent.`);
+    return;
+  }
+  try {
+    await sendWithReservation(session, channel, send);
+  } catch (err) {
+    console.error(`Auto-${channel} receipt failed for ${session.id}:`, err);
+  }
 }
 
 export default async function handler(req, res) {
@@ -26,33 +43,37 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Webhook not configured." });
   }
 
-  const stripe = getStripe();
+  let stripe;
   let event;
   try {
+    stripe = getStripe();
     const rawBody = await readRawBody(req);
     event = stripe.webhooks.constructEvent(rawBody, req.headers["stripe-signature"], webhookSecret);
   } catch (err) {
-    return res.status(400).json({ error: `Webhook signature verification failed: ${err.message}` });
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).json({ error: "Invalid signature." });
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+  if (PAID_EVENTS.has(event.type)) {
+    try {
+      // Re-fetch so we see the latest receipt metadata, not the copy frozen
+      // into this (possibly retried) event.
+      const session = await stripe.checkout.sessions.retrieve(event.data.object.id);
 
-    if (session.payment_status === "paid") {
-      const order = reconstructOrder(session);
-      const origin = `https://${req.headers.host}`;
+      if (session.payment_status === "paid") {
+        const order = reconstructOrder(session);
+        const origin = `https://${req.headers.host}`;
 
-      const [emailResult, smsResult] = await Promise.allSettled([
-        sendEmailReceipt(order),
-        sendSmsReceipt(order, origin),
-      ]);
-
-      if (emailResult.status === "rejected") {
-        console.error(`Auto-email failed for order ${order.orderId}:`, emailResult.reason);
+        // Sequential so the two metadata updates don't race each other.
+        await sendOnce(session, "email", () => sendEmailReceipt(order));
+        if (canText(order)) {
+          await sendOnce(session, "sms", () => sendSmsReceipt(order, origin));
+        }
       }
-      if (smsResult.status === "rejected") {
-        console.error(`Auto-SMS failed for order ${order.orderId}:`, smsResult.reason);
-      }
+    } catch (err) {
+      // Logged but still acknowledged: a retry would only risk duplicate
+      // receipts, and the customer can resend from the success page.
+      console.error(`Webhook processing failed for event ${event.id}:`, err);
     }
   }
 

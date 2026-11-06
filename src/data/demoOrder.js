@@ -17,6 +17,7 @@ export function createDemoOrder({
   subtotal,
   depositDue,
   remainingBalance,
+  smsConsent = false,
 }) {
   const sessionId = `${SESSION_PREFIX}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
@@ -39,6 +40,8 @@ export function createDemoOrder({
     scheduledDate,
     scheduledTime,
     customer,
+    smsConsent,
+    receipts: { email: { sent: false }, sms: { sent: false } },
     isDemo: true,
   };
 

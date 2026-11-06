@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
 import { getMenuData } from "../data/menu";
 import { InstagramIcon } from "./icons";
@@ -45,6 +46,15 @@ export default function Footer({ onNavigate }) {
           </a>
 
           <p className="font-display text-lg italic">{thankYouNote}</p>
+
+          <div className="flex gap-5 text-xs">
+            <Link to="/privacy" className="text-plum/70 transition-colors hover:text-mauve-dark">
+              {t.footer.privacy}
+            </Link>
+            <Link to="/terms" className="text-plum/70 transition-colors hover:text-mauve-dark">
+              {t.footer.terms}
+            </Link>
+          </div>
 
           <p className="text-xs text-plum/50">{t.footer.copyright(new Date().getFullYear())}</p>
         </>

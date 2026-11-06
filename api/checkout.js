@@ -1,14 +1,26 @@
-import { getStripe } from "./_lib/stripeOrder.js";
+import {
+  CartTooLargeError,
+  NotConfiguredError,
+  encodeItemsMetadata,
+  getStripe,
+  truncateMeta,
+} from "./_lib/stripeOrder.js";
 import { HOLIDAY_PRODUCTS, computeUnitPrice, describeSelections } from "../src/data/holidayMenu.js";
+
+// Bump when the consent wording in translations.js (cart.smsConsent) changes,
+// so each order records which version of the text the customer agreed to.
+const SMS_CONSENT_VERSION = "2026-11-05";
+
+class UnknownProductError extends Error {}
 
 // Prices are recomputed here from the product catalog rather than trusted from
 // the client, so a tampered request can't check out at an arbitrary amount.
 function revalidateItems(rawItems) {
   return rawItems.map((raw) => {
-    const product = HOLIDAY_PRODUCTS.find((p) => p.id === raw.productId);
-    if (!product) throw new Error(`Unknown product: ${raw.productId}`);
+    const product = HOLIDAY_PRODUCTS.find((p) => p.id === raw?.productId);
+    if (!product) throw new UnknownProductError(`Unknown product: ${raw?.productId}`);
 
-    const quantity = Math.max(1, Math.floor(Number(raw.quantity) || 1));
+    const quantity = Math.min(99, Math.max(1, Math.floor(Number(raw.quantity) || 1)));
     const unitPrice = computeUnitPrice(product, raw.selections);
     const selectionLabel = describeSelections(product, raw.selections);
 
@@ -16,32 +28,56 @@ function revalidateItems(rawItems) {
   });
 }
 
+// Errors go back to the browser as a short code (translated client-side);
+// details are only logged server-side.
+function fail(res, status, code) {
+  return res.status(status).json({ error: code });
+}
+
+function isValidIsoDate(value) {
+  return typeof value === "string" && value.length <= 40 && !Number.isNaN(Date.parse(value));
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "method_not_allowed" });
   }
 
   try {
-    const { items, customer, fulfillment, deliveryAddress, scheduledDate, scheduledTime } = req.body;
+    const {
+      items,
+      customer,
+      fulfillment,
+      deliveryAddress,
+      scheduledDate,
+      scheduledTime,
+      smsConsent,
+      smsConsentAt,
+      lang,
+    } = req.body || {};
 
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: "Your cart is empty." });
-    }
-    if (!customer?.name || !customer?.email || !customer?.phone) {
-      return res.status(400).json({ error: "Name, email, and phone are required." });
-    }
-    if (fulfillment === "delivery" && !deliveryAddress) {
-      return res.status(400).json({ error: "Delivery address is required." });
-    }
-    if (!scheduledDate || !scheduledTime) {
-      return res.status(400).json({ error: "A pickup/delivery date and time are required." });
-    }
+    if (!Array.isArray(items) || items.length === 0) return fail(res, 400, "cart_empty");
+    if (!customer?.name || !customer?.email || !customer?.phone) return fail(res, 400, "missing_contact");
+    if (fulfillment !== "pickup" && fulfillment !== "delivery") return fail(res, 400, "missing_contact");
+    if (fulfillment === "delivery" && !deliveryAddress) return fail(res, 400, "missing_address");
+    if (!scheduledDate || !scheduledTime) return fail(res, 400, "missing_schedule");
 
     const validatedItems = revalidateItems(items);
     const subtotal = validatedItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
     const depositDue = Math.round(subtotal * 50) / 100;
     const remainingBalance = subtotal - depositDue;
+
+    // Only an explicit `true` counts as consent. The server's clock is the
+    // record of when consent was given; the browser's timestamp is kept too.
+    const consented = smsConsent === true;
+    const consentMetadata = {
+      smsConsent: consented ? "true" : "false",
+      smsConsentAt: consented ? new Date().toISOString() : "",
+      smsConsentClientAt: consented && isValidIsoDate(smsConsentAt) ? smsConsentAt : "",
+      smsConsentVersion: consented ? SMS_CONSENT_VERSION : "",
+      smsConsentLang: lang === "es" ? "es" : "en",
+    };
 
     const stripe = getStripe();
     const origin = req.headers.origin || `https://${req.headers.host}`;
@@ -55,7 +91,7 @@ export default async function handler(req, res) {
             currency: "usd",
             product_data: {
               name: "Suly's Sweets — Holiday Order (50% Deposit)",
-              description: validatedItems.map((i) => `${i.quantity}x ${i.name}`).join(", "),
+              description: truncateMeta(validatedItems.map((i) => `${i.quantity}x ${i.name}`).join(", ")),
             },
             unit_amount: Math.round(depositDue * 100),
           },
@@ -65,21 +101,30 @@ export default async function handler(req, res) {
       success_url: `${origin}/holiday-order/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/holiday-order`,
       metadata: {
-        customerName: customer.name,
-        customerPhone: customer.phone,
+        customerName: truncateMeta(customer.name),
+        customerPhone: truncateMeta(customer.phone),
         fulfillment,
-        deliveryAddress: deliveryAddress || "",
-        scheduledDate,
-        scheduledTime,
+        deliveryAddress: fulfillment === "delivery" ? truncateMeta(deliveryAddress) : "",
+        scheduledDate: truncateMeta(scheduledDate),
+        scheduledTime: truncateMeta(scheduledTime),
         subtotal: subtotal.toFixed(2),
         depositDue: depositDue.toFixed(2),
         remainingBalance: remainingBalance.toFixed(2),
-        items: JSON.stringify(validatedItems),
+        ...consentMetadata,
+        ...encodeItemsMetadata(validatedItems),
       },
     });
 
     return res.status(200).json({ url: session.url });
   } catch (err) {
-    return res.status(500).json({ error: err.message || "Checkout failed." });
+    if (err instanceof NotConfiguredError) {
+      // Lets the storefront fall back to demo checkout until keys are added.
+      console.warn("Checkout unavailable:", err.message);
+      return fail(res, 503, "not_configured");
+    }
+    if (err instanceof UnknownProductError) return fail(res, 400, "unknown_product");
+    if (err instanceof CartTooLargeError) return fail(res, 400, "cart_too_large");
+    console.error("Checkout failed:", err);
+    return fail(res, 500, "checkout_failed");
   }
 }
