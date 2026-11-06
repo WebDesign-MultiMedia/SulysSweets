@@ -4,7 +4,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 const CONTACT_EMAIL = "sulyssweets24@gmail.com";
 
 const inputClass =
-  "w-full rounded-xl border border-mauve/30 bg-white/70 px-4 py-2.5 text-sm text-plum placeholder:text-plum/40 outline-none transition-colors focus:border-mauve-dark focus:bg-white";
+  "w-full rounded-xl border border-plum/10 bg-white/80 px-4 py-3 text-sm text-plum placeholder:text-plum/35 outline-none transition-all focus:border-mauve-dark focus:bg-white focus:ring-4 focus:ring-mauve/15";
 const labelClass = "mb-1.5 block text-xs font-medium tracking-wide text-mauve-dark uppercase";
 
 export default function OrderForm() {
@@ -67,12 +67,12 @@ export default function OrderForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto mt-10 max-w-xl rounded-3xl border border-mauve/30 bg-gradient-to-br from-ivory to-[#ecdcc0] px-6 py-7 text-left shadow-[0_1px_1px_rgba(61,43,57,0.08),0_10px_18px_-8px_rgba(61,43,57,0.18),0_20px_32px_-16px_rgba(61,43,57,0.25),inset_0_1px_0_rgba(255,255,255,0.7)] sm:px-8"
+      className="mx-auto max-w-xl rounded-[2rem] border border-white/70 bg-ivory/80 px-6 py-8 text-left shadow-[0_1px_2px_rgba(61,43,57,0.06),0_30px_60px_-30px_rgba(61,43,57,0.4)] backdrop-blur-sm sm:px-10 sm:py-10 lg:max-w-none"
     >
       <p className="text-center text-xs font-medium tracking-[0.3em] text-mauve-dark uppercase">
         {orderForm.eyebrow}
       </p>
-      <h3 className="mt-2 text-center font-display text-2xl text-plum">{orderForm.title}</h3>
+      <h3 className="mt-3 text-center font-display text-3xl text-plum">{orderForm.title}</h3>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
@@ -168,7 +168,7 @@ export default function OrderForm() {
 
       <button
         type="submit"
-        className="mt-6 w-full rounded-full bg-plum px-9 py-3.5 text-sm tracking-wide text-cream uppercase transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+        className="mt-8 w-full rounded-full bg-plum px-9 py-4 text-sm tracking-wide text-cream shadow-[0_12px_24px_-12px_rgba(61,43,57,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#4a3546]"
       >
         {orderForm.submit}
       </button>

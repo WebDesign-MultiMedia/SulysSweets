@@ -64,8 +64,10 @@ export default function Header({ activePage, onNavigate }) {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-ivory/90 py-3 shadow-sm backdrop-blur-sm" : "bg-transparent py-6"
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "border-b border-plum/10 bg-ivory/75 py-2.5 shadow-[0_8px_30px_-18px_rgba(61,43,57,0.35)] backdrop-blur-xl"
+            : "bg-transparent py-5"
         }`}
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
@@ -82,9 +84,9 @@ export default function Header({ activePage, onNavigate }) {
                 alt="Suly's Sweets logo"
                 width={40}
                 height={40}
-                className="h-20 w-20 rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform duration-300 hover:scale-105 hover:[transform:rotateY(-12deg)]"
+                className={`${scrolled ? "h-12 w-12" : "h-16 w-16"} rounded-full ring-1 ring-white/60 shadow-[0_1px_2px_rgba(61,43,57,0.2),0_4px_8px_-2px_rgba(61,43,57,0.35),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-all duration-500 hover:scale-105`}
               />
-              <span className="font-script text-2xl tracking-wide text-plum"></span>
+              <span className="hidden font-display text-xl text-plum lg:inline">Suly&apos;s Sweets</span>
             </a>
 
             <div
@@ -96,7 +98,7 @@ export default function Header({ activePage, onNavigate }) {
             </div>
           </div>
 
-          <ul className="hidden items-center gap-10 md:flex">
+          <ul className="hidden items-center gap-8 md:flex">
             {navLinks.map((link, i) => (
               <li
                 key={link.href}
@@ -107,9 +109,10 @@ export default function Header({ activePage, onNavigate }) {
               >
                 <a
                   href={link.href}
-                  className="text-sm tracking-wide text-plum/80 transition-colors hover:text-mauve-dark"
+                  className="group relative py-1 text-sm tracking-wide text-plum/80 transition-colors hover:text-plum"
                 >
                   {link.label}
+                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-mauve-dark transition-transform duration-300 group-hover:scale-x-100" />
                 </a>
               </li>
             ))}
@@ -121,10 +124,10 @@ export default function Header({ activePage, onNavigate }) {
             >
               <Link
                 to="/holiday-order"
-                className="flex flex-col items-center rounded-full bg-forest px-4 py-1.5 leading-tight text-cashmere transition-transform hover:-translate-y-0.5 hover:shadow-md"
+                className="flex flex-col items-center rounded-full bg-forest px-5 py-1.5 leading-tight text-cashmere ring-1 ring-gold/40 transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-10px_rgba(30,58,43,0.7)]"
               >
-                <span className="text-sm tracking-wide">Holiday Menu</span>
-                <span className="text-[10px] tracking-wide text-cashmere/70">Place Your Order</span>
+                <span className="text-sm tracking-wide">{t.header.holidayMenu}</span>
+                <span className="text-[10px] tracking-wide text-gold-light/80">{t.header.placeOrder}</span>
               </Link>
             </li>
             <li
@@ -151,7 +154,7 @@ export default function Header({ activePage, onNavigate }) {
         aria-expanded={open}
         className={`fixed z-[60] flex h-11 w-11 items-center justify-center rounded-full border border-plum/10 shadow-lg transition-all duration-500 ease-out md:hidden ${
           mounted ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
-        } ${open ? "top-5 right-5 bg-cream" : scrolled ? "top-4 right-5 bg-cream" : "top-6 right-5 bg-cream/90"}`}
+        } ${open ? "top-5 right-5 bg-cream" : scrolled ? "top-4 right-5 bg-cream" : "top-5 right-5 bg-cream/90"}`}
       >
         <span className="flex h-4 w-4 flex-shrink-0 flex-col items-center justify-center gap-1">
           <span
@@ -210,8 +213,8 @@ export default function Header({ activePage, onNavigate }) {
             open ? "scale-100 opacity-100" : "scale-75 opacity-0"
           }`}
         >
-          <span className="font-script text-3xl leading-tight">Holiday Menu</span>
-          <span className="text-xs tracking-wide text-cashmere/70">Place Your Order</span>
+          <span className="font-script text-3xl leading-tight">{t.header.holidayMenu}</span>
+          <span className="text-xs tracking-wide text-cashmere/70">{t.header.placeOrder}</span>
         </Link>
 
         <a

@@ -8,6 +8,7 @@ import InstagramSection from "../components/InstagramSection";
 import ContactSection from "../components/ContactSection";
 import Footer from "../components/Footer";
 import VantaBackground from "../components/VantaBackground";
+import Marquee from "../components/Marquee";
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -46,6 +47,7 @@ export default function Home() {
       <main>
         <div className={pageClass("home")}>
           <Hero onNavigate={handleNavigate} />
+          <Marquee />
         </div>
         <div className={pageClass("about")}>
           <About />

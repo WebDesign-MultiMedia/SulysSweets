@@ -1,27 +1,46 @@
 import Reveal from "./Reveal";
-import AboutSlideshow from "./AboutSlideshow";
+import ProductShot from "./ProductShot";
+import SectionHeading from "./SectionHeading";
+import { GALLERY, altFor } from "../data/gallery";
 import { useLanguage } from "../i18n/LanguageContext";
 
+// Alternating panel tints keep the grid lively while staying on-palette.
+const PANELS = ["from-ivory to-blush", "from-blush to-cream", "from-cream to-ivory"];
+
+// Three 2×2 feature tiles + eight singles = 20 cells, which fills both the
+// 2-column (mobile) and 4-column grids with no gaps.
+const FEATURED = new Set([0, 5, 9]);
+
 export default function GallerySection() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
 
   return (
-    <section id="gallery" className="bg-blush/60 px-5 py-20 backdrop-blur-md sm:px-8 sm:py-28">
-      <div className="mx-auto max-w-2xl text-center">
-        <Reveal as="p" className="text-xs font-medium tracking-[0.35em] text-mauve-dark uppercase">
-          {t.gallery.eyebrow}
-        </Reveal>
-        <Reveal delay={120}>
-          <h2 className="mt-4 font-display text-4xl text-plum sm:text-5xl">{t.gallery.title}</h2>
-        </Reveal>
-        <Reveal delay={240} as="p" className="mx-auto mt-6 max-w-md text-base leading-relaxed text-plum/75">
-          {t.gallery.paragraph}
-        </Reveal>
+    <section id="gallery" className="bg-blush/60 px-5 py-24 backdrop-blur-md sm:px-8 sm:py-32">
+      <SectionHeading eyebrow={t.gallery.eyebrow} title={t.gallery.title}>
+        {t.gallery.paragraph}
+      </SectionHeading>
+
+      <div className="mx-auto mt-14 grid max-w-6xl grid-flow-dense grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
+        {GALLERY.map((item, i) => (
+          <Reveal
+            key={item.src}
+            delay={(i % 4) * 80}
+            className={FEATURED.has(i) ? "col-span-2 row-span-2" : ""}
+          >
+            <ProductShot
+              src={item.src}
+              alt={altFor(item, lang)}
+              caption={item[lang] ?? item.en}
+              panel={PANELS[i % PANELS.length]}
+              className={`rounded-[1.75rem] ${FEATURED.has(i) ? "aspect-square h-full" : "aspect-square"}`}
+              imgClassName={FEATURED.has(i) ? "p-6 sm:p-10" : "p-3 sm:p-5"}
+            />
+          </Reveal>
+        ))}
       </div>
 
-      <Reveal delay={320} className="relative mx-auto mt-12 aspect-[4/3] w-full max-w-2xl">
-        <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-ivory to-[#ecdcc0] shadow-[0_1px_1px_rgba(61,43,57,0.08),0_14px_24px_-10px_rgba(61,43,57,0.2),0_30px_45px_-20px_rgba(61,43,57,0.3),inset_0_1px_0_rgba(255,255,255,0.7)]" />
-        <AboutSlideshow className="h-full w-full rounded-[2rem]" />
+      <Reveal as="p" className="mt-8 text-center text-xs tracking-wide text-plum/55">
+        {t.gallery.hint}
       </Reveal>
     </section>
   );
